@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IIITH Mess — June 2026</title>
+  <style>
+    :root {
+      --bg: #0a0c14;
+      --surface: #111420;
+      --card: #161926;
+      --border: #1e2338;
+      --text: #dde3f0;
+      --muted: #6b7591;
+      --dim: #3a4260;
+      --k-accent: #f97316;
+      --k-bg: #1a1008;
+      --k-border: #f97316;
+      --y-accent: #22d3ee;
+      --y-bg: #041418;
+      --y-border: #22d3ee;
+      --nonveg-col: #f97316;
+      --rajma-col: #ef4444;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f4f6fb;
+        --surface: #ffffff;
+        --card: #eef1f8;
+        --border: #d0d6e8;
+        --text: #1a1f36;
+        --muted: #6b7591;
+        --dim: #9aa3c0;
+        --k-bg: #fff4ec;
+        --k-border: #f97316;
+        --y-bg: #e8fafd;
+        --y-border: #22d3ee;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+    }
+
+    /* ── Header ── */
+    .page-title {
+      text-align: center;
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* ── Date Wheel ── */
+    .wheel-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 32px;
+      user-select: none;
+    }
+
+    .wheel-track {
+      position: relative;
+      height: 120px;
+      width: 220px;
+      overflow: hidden;
+      cursor: ns-resize;
+      touch-action: none;
+      overscroll-behavior: contain;
+    }
+
+    .wheel-track::before,
+    .wheel-track::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 36px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .wheel-track::before {
+      top: 0;
+      background: linear-gradient(to bottom, var(--bg), transparent);
+    }
+
+    .wheel-track::after {
+      bottom: 0;
+      background: linear-gradient(to top, var(--bg), transparent);
+    }
+
+    .wheel-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.18s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .wheel-item {
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 220px;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--dim);
+      transition: all 0.18s;
+      flex-shrink: 0;
+    }
+
+    .wheel-item.active {
+      font-size: 2.8rem;
+      color: var(--text);
+      height: 60px;
+    }
+
+    .wheel-item.near {
+      color: var(--muted);
+      font-size: 1.4rem;
+    }
+
+    .wheel-arrows {
+      display: flex;
+      gap: 48px;
+      margin-top: 8px;
+    }
+
+    .wheel-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.12s;
+    }
+
+    .wheel-btn:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    .wheel-btn:active {
+      transform: scale(0.92);
+    }
+
+    .date-label {
+      margin-top: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .week-badge {
+      margin-top: 4px;
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* ── Meals ── */
+    .meals {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .meal-block {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .meal-label {
+      padding: 9px 18px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+      font-weight: 600;
+    }
+
+    .cards-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* ── Individual mess card ── */
+    .mess-card {
+      padding: 16px 18px 16px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.15s;
+      border: 2px solid transparent;
+      border-radius: 0;
+    }
+
+    .mess-card:first-child {
+      border-right: 1px solid var(--border);
+    }
+
+    .mess-card:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .mess-card.sel-k {
+      background: var(--k-bg) !important;
+      border: 2px solid var(--k-border);
+      border-radius: 2px;
+    }
+
+    .mess-card.sel-y {
+      background: var(--y-bg) !important;
+      border: 2px solid var(--y-border);
+      border-radius: 2px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .mess-name {
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nvdot {
+      width: 7px;
+      height: 7px;
+      background: var(--nonveg-col);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .tick {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.15s;
+      flex-shrink: 0;
+    }
+
+    .sel-k .tick {
+      opacity: 1;
+      background: var(--k-accent);
+      color: #000;
+    }
+
+    .sel-y .tick {
+      opacity: 1;
+      background: var(--y-accent);
+      color: #000;
+    }
+
+    .hero-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+
+    .sel-k .hero-name {
+      color: var(--k-accent);
+    }
+
+    .sel-y .hero-name {
+      color: var(--y-accent);
+    }
+
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .item-row {
+      display: flex;
+      gap: 7px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .item-cat {
+      font-size: 0.62rem;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      min-width: 48px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .item-name {
+      color: #8a96b4;
+    }
+
+    .item-row.nv .item-name {
+      color: var(--nonveg-col);
+      font-weight: 600;
+    }
+
+    .item-row.rj .item-name {
+      color: var(--rajma-col);
+    }
+
+    .rajma-warn {
+      margin-top: 7px;
+      font-size: 0.68rem;
+      color: var(--rajma-col);
+      opacity: 0.8;
+    }
+
+    /* ── Summary ── */
+    .summary {
+      max-width: 860px;
+      margin: 20px auto 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+    }
+
+    .sum-title {
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 10px;
+    }
+
+    .sum-rows {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .sum-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .sum-meal {
+      min-width: 76px;
+      color: var(--dim);
+    }
+
+    .sum-choice {
+      font-weight: 600;
+    }
+
+    .sum-choice.k {
+      color: var(--k-accent);
+    }
+
+    .sum-choice.y {
+      color: var(--y-accent);
+    }
+
+    .sum-choice.none {
+      color: var(--dim);
+    }
+
+    @media (max-width: 560px) {
+      .hero-name {
+        font-size: 0.9rem;
+      }
+
+      .item-row {
+        font-size: 0.72rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <p class="page-title">IIITH Mess &mdash; June 2026</p>
+
+  <div class="wheel-wrap">
+    <div class="wheel-track" id="wheelTrack">
+      <div class="wheel-inner" id="wheelInner"></div>
+    </div>
+    <div class="wheel-arrows">
+      <button class="wheel-btn" id="prevBtn">&#8593;</button>
+      <button class="wheel-btn" id="nextBtn">&#8595;</button>
+    </div>
+    <div class="date-label" id="dateLabel"></div>
+  </div>
+
+  <div class="meals" id="meals"></div>
+
+  <div class="summary">
+    <div class="sum-title">Today's Picks</div>
+    <div class="sum-rows" id="sumRows"></div>
+  </div>
+
+  <script>
+    // ─────────────────────────────────────────────
+    // DATA
+    // ─────────────────────────────────────────────
+    const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+    // Kadamba — same menu every week
+    const K = {
+      sunday: {
+        breakfast: {
+          hero: "Pongal + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Wada" }, { c: "Dish 2", n: "Pongal" }, { c: "Soup", n: "Sambar" },
+            { c: "Sprouts", n: "Boiled Black Channa" }, { c: "Cereals", n: "Muesli" },
+            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+        },
+        lunch: {
+          hero: "Chicken Dum Biryani", nv: "Chicken Dum Biryani", items: [
+            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Dal", n: "Palakura Pappu" },
+            { c: "Wet", n: "Mirchi Ka Salan" }, { c: "Raita", n: "Raitha & Curd" },
+            { c: "Dessert", n: "Fruit Custard" }]
+        },
+        dinner: {
+          hero: "Vangi Bath", nv: null, items: [
+            { c: "Rice", n: "Vangi Bath" }, { c: "Dal", n: "Tomato Pappu" },
+            { c: "Wet", n: "Rajma Masala", rj: 1 }, { c: "Dry", n: "Cabbage Pesarapappu" },
+            { c: "Rasam", n: "Pachi Pulusu" }]
+        }
+      },
+      monday: {
+        breakfast: {
+          hero: "Pesarattu + Omelette", nv: "Omelette", items: [
+            { c: "Dish 1", n: "Pesarattu" }, { c: "Dish 2", n: "Upma" }, { c: "Soup", n: "Sambar" },
+            { c: "Sprouts", n: "Moongdal Sprouts" }, { c: "Non-Veg", n: "Omelette", nv: 1 }]
+        },
+        lunch: {
+          hero: "Meal Maker Curry", nv: null, items: [
+            { c: "Rice", n: "Jeera Rice" }, { c: "Dal", n: "Mamidikaya Pappu" },
+            { c: "Wet", n: "Meal Maker Curry" }, { c: "Dry", n: "Aloo Fry" },
+            { c: "Rasam", n: "Dappalam" }, { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "Kadai Chicken", nv: "Kadai Chicken", items: [
+            { c: "Rice", n: "Tomato Pulao" }, { c: "Dal", n: "Sorakai Kootu" },
+            { c: "Wet", n: "Dosakaya Tomato Curry" }, { c: "Dry", n: "Vankaya Fry" },
+            { c: "Dessert", n: "Saboodhana Kheer" }, { c: "Non-Veg", n: "Kadai Chicken", nv: 1 }]
+        }
+      },
+      tuesday: {
+        breakfast: {
+          hero: "Mysore Bonda + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Mysore Bonda" }, { c: "Dish 2", n: "Oats Upma" }, { c: "Soup", n: "Sambar" },
+            { c: "Sprouts", n: "Boiled Chickpeas" }, { c: "Cereals", n: "Muesli" },
+            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+        },
+        lunch: {
+          hero: "Gutti Vankaya Masala", nv: null, items: [
+            { c: "Rice", n: "Pulihora (Tamarind Rice)" }, { c: "Dal", n: "Dosakaya Pappu" },
+            { c: "Wet", n: "Gutti Vankaya Masala" }, { c: "Dry", n: "Dondakaya Fry" },
+            { c: "Dessert", n: "Ravva Kesari" }, { c: "Drink", n: "Lassi" }]
+        },
+        dinner: {
+          hero: "Chamagadda Pulusu", nv: null, items: [
+            { c: "Rice", n: "Kichidi (Dry Pulao)" }, { c: "Dal", n: "Palakura Pappu" },
+            { c: "Wet", n: "Chamagadda Pulusu (Arvi)" }, { c: "Dry", n: "Gokarakaya Dum Fry" },
+            { c: "Rasam", n: "Rasam" }]
+        }
+      },
+      wednesday: {
+        breakfast: {
+          hero: "Idly + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Idly" }, { c: "Dish 2", n: "Semiya Bath" }, { c: "Soup", n: "Sambar" },
+            { c: "Sprouts", n: "Boiled Peanuts" }, { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+        },
+        lunch: {
+          hero: "Chicken Dum Biryani", nv: "Chicken Dum Biryani", items: [
+            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Dal", n: "Tomato Pappu" },
+            { c: "Wet", n: "Mirchi Ka Salan" }, { c: "Raita", n: "Raitha & Curd" },
+            { c: "Drink", n: "Shabja Sherbat" }]
+        },
+        dinner: {
+          hero: "Pudina Pulao", nv: null, items: [
+            { c: "Rice", n: "Pudina Pulao" }, { c: "Dal", n: "Masala Pappu" },
+            { c: "Wet", n: "Aloo Tomato Kura" }, { c: "Dry", n: "Mix Veg Poriyal" },
+            { c: "Dessert", n: "Chakkera Pongal" }, { c: "Soup", n: "Sambar" }]
+        }
+      },
+      thursday: {
+        breakfast: {
+          hero: "Uttappam + Omelette", nv: "Omelette", items: [
+            { c: "Dish 1", n: "Uttappam" }, { c: "Dish 2", n: "Tomato Bath" },
+            { c: "Cereals", n: "Oats" }, { c: "Sprouts", n: "Moongdal Sprouts" },
+            { c: "Non-Veg", n: "Omelette", nv: 1 }]
+        },
+        lunch: {
+          hero: "Bisibele Bath", nv: null, items: [
+            { c: "Rice", n: "Bisibele Bath" }, { c: "Dal", n: "Sorakaya Pappu" },
+            { c: "Wet", n: "Rajma Masala", rj: 1 }, { c: "Dry", n: "Kandagadda Fry (Yam)" },
+            { c: "Rasam", n: "Tomato Rasam" }, { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "Egg Curry", nv: "Egg Curry", items: [
+            { c: "Rice", n: "Bagara Rice" }, { c: "Dal", n: "Chukkakura Pappu" },
+            { c: "Wet", n: "Mix Veg Korma" }, { c: "Dry", n: "Beerakaya Fry" },
+            { c: "Non-Veg", n: "Egg Curry", nv: 1 }]
+        }
+      },
+      friday: {
+        breakfast: {
+          hero: "Tatte Idly + Boiled Egg", nv: "Boiled Egg", items: [
+            { c: "Dish 1", n: "Tatte Idly" }, { c: "Dish 2", n: "Uggani" },
+            { c: "Chutney", n: "Coconut Chutney" }, { c: "Sprouts", n: "Black Channa Sprout" },
+            { c: "Non-Veg", n: "Boiled Egg", nv: 1 }]
+        },
+        lunch: {
+          hero: "Avial", nv: null, items: [
+            { c: "Rice", n: "Aloo ki Tahiri" }, { c: "Dal", n: "Cabbage Pappu" },
+            { c: "Wet", n: "Avial" }, { c: "Dry", n: "Banana Chips Fry" },
+            { c: "Rasam", n: "Pineapple Rasam" }, { c: "Dessert", n: "Semiya Payasam" },
+            { c: "Drink", n: "Jaljeera" }]
+        },
+        dinner: {
+          hero: "Chicken Curry", nv: "Chicken Curry", items: [
+            { c: "Rice", n: "Raagi Sankati" }, { c: "Dal", n: "Gongura Pappu" },
+            { c: "Wet", n: "Kadala Curry" }, { c: "Dry", n: "Aloo Jeera" },
+            { c: "Soup", n: "Sambar" }, { c: "Non-Veg", n: "Chicken Curry", nv: 1 }]
+        }
+      },
+      saturday: {
+        breakfast: {
+          hero: "Poori + Scrambled Egg", nv: "Scrambled Egg", items: [
+            { c: "Dish 1", n: "Poori" }, { c: "Dish 2", n: "Dhaliya Upma" },
+            { c: "Side", n: "Aloo Bhaji" }, { c: "Sprouts", n: "Boiled Chickpeas" },
+            { c: "Non-Veg", n: "Scrambled Egg", nv: 1 }]
+        },
+        lunch: {
+          hero: "Chole Masala", nv: null, items: [
+            { c: "Rice", n: "Veg Pulao" }, { c: "Dal", n: "Tomato Pappu" },
+            { c: "Wet", n: "Chole Masala" }, { c: "Dry", n: "Vankaya Aloo Dry" },
+            { c: "Rasam", n: "Ginger Rasam" }, { c: "Drink", n: "Lassi" }]
+        },
+        dinner: {
+          hero: "Kadai Paneer", nv: null, items: [
+            { c: "Rice", n: "Jeera Pulao" }, { c: "Dal", n: "Mixed Greens Pappu" },
+            { c: "Wet", n: "Kadai Paneer" }, { c: "Dry", n: "Raw Banana Dry" },
+            { c: "Rasam", n: "Pachi Pulusu" }, { c: "Dessert", n: "Kala Jamoon" }]
+        }
+      }
+    };
+
+    // Yuktahar Week A
+    const YA = {
+      sunday: {
+        breakfast: {
+          hero: "Pesarattu", items: [
+            { c: "Dish 1", n: "Pesarattu" }, { c: "Dish 2", n: "Rava Upma" },
+            { c: "Soup", n: "Ginger Chutney" }, { c: "Sprouts", n: "Steamed Black Chick Peas" },
+            { c: "Cereals", n: "Ragi Malt" }, { c: "Fruit", n: "Seasonal Fruit" }]
+        },
+        lunch: {
+          hero: "Barnyard Millet Rice", items: [
+            { c: "Rice", n: "Barnyard Millet Rice" }, { c: "Dal", n: "Arhar Dal" },
+            { c: "Dry", n: "Capsicum with Besan" }, { c: "Chutney", n: "Tomato Chutney" },
+            { c: "Dessert", n: "Fruit Custard" }]
+        },
+        dinner: {
+          hero: "Masala Paneer", items: [
+            { c: "Rice", n: "Peas Pulav" }, { c: "Dal", n: "Black Masoor Dal" },
+            { c: "Wet", n: "Masala Paneer" }, { c: "Rasam", n: "Rasam" },
+            { c: "Chutney", n: "Coconut Podi" }]
+        }
+      },
+      monday: {
+        breakfast: {
+          hero: "Ragi Idli", items: [
+            { c: "Dish 1", n: "Ragi (Millet) Idli" }, { c: "Dish 2", n: "Millet Poha" },
+            { c: "Soup", n: "Sambar" }, { c: "Sprouts", n: "Steamed Black Chick Peas" },
+            { c: "Cereals", n: "Ragi Malt" }]
+        },
+        lunch: {
+          hero: "Mixed Veg Paneer", items: [
+            { c: "Rice", n: "Tamarind Rice" }, { c: "Dal", n: "Green Gram Dal" },
+            { c: "Wet", n: "Mixed Veg Paneer" }, { c: "Chutney", n: "Ridge Gourd Chutney" },
+            { c: "Dessert", n: "Rava Kesari" }]
+        },
+        dinner: {
+          hero: "Vegetable Paratha", items: [
+            { c: "Roti", n: "Vegetable Paratha" }, { c: "Rice", n: "Curry Leaves Rice" },
+            { c: "Dal", n: "Panchrang Dal" }, { c: "Dry", n: "Okra with Besan" },
+            { c: "Rasam", n: "Rasam" }]
+        }
+      },
+      tuesday: {
+        breakfast: {
+          hero: "Dosa", items: [
+            { c: "Dish 1", n: "Dosa" }, { c: "Dish 2", n: "Hot Pongal" },
+            { c: "Soup", n: "Sambar" }, { c: "Sprouts", n: "Steamed Black Chick Peas" },
+            { c: "Cereals", n: "Ragi Malt" }]
+        },
+        lunch: {
+          hero: "Beans & Carrot Priyal", items: [
+            { c: "Rice", n: "Curd Rice" }, { c: "Dal", n: "Tuvar Dal with Tomato" },
+            { c: "Wet", n: "Beans & Carrot Priyal" }, { c: "Chutney", n: "Gongura Chutney" }]
+        },
+        dinner: {
+          hero: "Pumpkin with Black Chick Peas", rj: 1, items: [
+            { c: "Rice", n: "Pepper Rice" }, { c: "Dal", n: "Rajma", rj: 1 },
+            { c: "Dry", n: "Pumpkin with Black Chick Peas" },
+            { c: "Rasam", n: "Rasam" }, { c: "Dessert", n: "Raagi Laddu" }]
+        }
+      },
+      wednesday: {
+        breakfast: {
+          hero: "Veg Paratha", items: [
+            { c: "Dish 1", n: "Veg Paratha" }, { c: "Dish 2", n: "Uggani" },
+            { c: "Sprouts", n: "Steamed Black Chick Peas" }, { c: "Cereals", n: "Ragi Malt" },
+            { c: "Drink", n: "Hot Milk or Curd" }]
+        },
+        lunch: {
+          hero: "Palak Paneer", items: [
+            { c: "Salad", n: "Choley Chaat" }, { c: "Roti", n: "Multi-Grain Roti" },
+            { c: "Dal", n: "Dal Fry" }, { c: "Wet", n: "Aloo Baingan" },
+            { c: "Dry", n: "Palak Paneer" }, { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "Bottle Gourd", items: [
+            { c: "Dish", n: "Veg Idli" }, { c: "Wet", n: "Bottle Gourd" },
+            { c: "Soup", n: "Sambar" }, { c: "Chutney", n: "Ground Nut Chutney" }]
+        }
+      },
+      thursday: {
+        breakfast: {
+          hero: "Thepla", items: [
+            { c: "Dish 1", n: "Thepla" }, { c: "Dish 2", n: "Dahi Poha" },
+            { c: "Sprouts", n: "Steamed Black Chick Peas" }, { c: "Cereals", n: "Ragi Malt" },
+            { c: "Dry Fruit", n: "Soaked Apricot" }]
+        },
+        lunch: {
+          hero: "Dahi Arbi", items: [
+            { c: "Roti", n: "Besan Ki Roti" }, { c: "Dal", n: "Mah Choley Ki Dal" },
+            { c: "Wet", n: "Dahi Arbi" }, { c: "Soup", n: "Sambar" },
+            { c: "Dessert", n: "Semolina Kheer" }]
+        },
+        dinner: {
+          hero: "Dal Makhni", items: [
+            { c: "Dal", n: "Dal Makhni" }, { c: "Wet", n: "Gatte Ki Sabzi" },
+            { c: "Dry", n: "Flat / Cluster Beans" }, { c: "Rasam", n: "Rasam" }]
+        }
+      },
+      friday: {
+        breakfast: {
+          hero: "Veg Idli", items: [
+            { c: "Dish 1", n: "Veg Idli" }, { c: "Dish 2", n: "Semia Upma" },
+            { c: "Soup", n: "Sambar" }, { c: "Sprouts", n: "Steamed Black Chick Peas" },
+            { c: "Cereals", n: "Ragi Malt" }]
+        },
+        lunch: {
+          hero: "Foxtail Millet Rice", rj: 1, items: [
+            { c: "Rice", n: "Foxtail Millet Rice" }, { c: "Dal", n: "Rajma", rj: 1 },
+            { c: "Dry", n: "Beetroot Poriyal" }, { c: "Salad", n: "Cucumber, Carrot, Onion" }]
+        },
+        dinner: {
+          hero: "Lobia", items: [
+            { c: "Rice", n: "Millet Balls" }, { c: "Dal", n: "Lobia" },
+            { c: "Dry", n: "Raw Banana Curry" }, { c: "Rasam", n: "Rasam" },
+            { c: "Dessert", n: "Rava Laddu" }]
+        }
+      },
+      saturday: {
+        breakfast: {
+          hero: "Aloo Paratha", items: [
+            { c: "Dish 1", n: "Aloo Paratha" }, { c: "Dish 2", n: "Millet Poha" },
+            { c: "Sprouts", n: "Steamed Black Chick Peas" }, { c: "Cereals", n: "Ragi Malt" },
+            { c: "Dry Fruit", n: "Dates" }]
+        },
+        lunch: {
+          hero: "Lobia Chaat + Bajra Roti", items: [
+            { c: "Salad", n: "Lobia Chaat" }, { c: "Roti", n: "Bajra Roti" },
+            { c: "Dal", n: "Moong Dal" }, { c: "Wet", n: "Potato & Cauliflower" },
+            { c: "Rasam", n: "Pachchi Pulusu" }]
+        },
+        dinner: {
+          hero: "Green Moong Khichdi", items: [
+            { c: "Roti", n: "Daal Bhari Roti" }, { c: "Khichdi", n: "Green Moong Khichdi" },
+            { c: "Dal", n: "Mudda Pappu" }, { c: "Dry", n: "Potato & Brinjal Chokha" },
+            { c: "Dessert", n: "Gajar Ka Halwa" }]
+        }
+      }
+    };
+
+    // Yuktahar Week B
+    const YB = {
+      sunday: {
+        breakfast: {
+          hero: "Dosa", items: [
+            { c: "Dish 1", n: "Dosa" }, { c: "Dish 2", n: "Tomato Bath" },
+            { c: "Soup", n: "Sambar" }, { c: "Sprouts", n: "Steamed Green Gram" },
+            { c: "Cereals", n: "Boiled Dalia" }, { c: "Fruit", n: "Seasonal Fruit" }]
+        },
+        lunch: {
+          hero: "Raw Banana with Coconut", items: [
+            { c: "Rice", n: "Foxtail Millet Rice" }, { c: "Dal", n: "Lauki Dalcha" },
+            { c: "Dry", n: "Raw Banana with Coconut" }, { c: "Rasam", n: "Pepper Rasam" },
+            { c: "Dessert", n: "Fruit Custard" }]
+        },
+        dinner: {
+          hero: "Kadai Paneer", items: [
+            { c: "Rice", n: "Corn Beans Pulav" }, { c: "Dal", n: "Tuvar Dal" },
+            { c: "Wet", n: "Kadai Paneer" }, { c: "Rasam", n: "Rasam" },
+            { c: "Chutney", n: "Coconut Podi" }]
+        }
+      },
+      monday: {
+        breakfast: {
+          hero: "Vegetable Idly", items: [
+            { c: "Dish 1", n: "Vegetable Idly" }, { c: "Dish 2", n: "Poha" },
+            { c: "Soup", n: "Sambar" }, { c: "Sprouts", n: "Steamed Green Gram" },
+            { c: "Cereals", n: "Boiled Dalia" }]
+        },
+        lunch: {
+          hero: "Mango Pulihora", items: [
+            { c: "Rice", n: "Mango Pulihora" }, { c: "Dal", n: "Urad-Chana Dal" },
+            { c: "Dry", n: "Snake Gourd with Tomato" }, { c: "Chutney", n: "Cabbage Chutney" },
+            { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "Aloo Paratha", items: [
+            { c: "Roti", n: "Aloo Paratha" }, { c: "Rice", n: "Mint Rice" },
+            { c: "Dal", n: "Panchrang Dal" }, { c: "Dry", n: "Okra with Besan" },
+            { c: "Rasam", n: "Rasam" }]
+        }
+      },
+      tuesday: {
+        breakfast: {
+          hero: "Besan Chilla", items: [
+            { c: "Dish 1", n: "Besan Chilla" }, { c: "Dish 2", n: "Semiya Upma" },
+            { c: "Chutney", n: "Tomato Chutney" }, { c: "Sprouts", n: "Steamed Green Gram" },
+            { c: "Cereals", n: "Boiled Dalia" }]
+        },
+        lunch: {
+          hero: "Millet Pulao", items: [
+            { c: "Salad", n: "Black Chana Chaat" }, { c: "Roti", n: "Multi-Grain Roti" },
+            { c: "Rice", n: "Millet Pulao" }, { c: "Dal", n: "Black Masoor Dal" },
+            { c: "Wet", n: "Potato & Cauliflower" }]
+        },
+        dinner: {
+          hero: "Yam with Tomato", items: [
+            { c: "Rice", n: "Jeera Rice" }, { c: "Dal", n: "Tota Khura Dal" },
+            { c: "Dry", n: "Yam (Kandagadda) with Tomato" },
+            { c: "Rasam", n: "Rasam" }, { c: "Dessert", n: "Raagi Laddu" }]
+        }
+      },
+      wednesday: {
+        breakfast: {
+          hero: "Foxtail Millet Poha", items: [
+            { c: "Dish 1", n: "Triangle Roti" }, { c: "Dish 2", n: "Foxtail Millet Poha" },
+            { c: "Side", n: "Aloo Ki Sabzi" }, { c: "Sprouts", n: "Steamed Green Gram" },
+            { c: "Cereals", n: "Boiled Dalia" }]
+        },
+        lunch: {
+          hero: "Matar Paneer", items: [
+            { c: "Rice", n: "Barnyard Millet Corn Rice" }, { c: "Dal", n: "Green Gram Dal" },
+            { c: "Wet", n: "Matar Paneer" }, { c: "Dry", n: "Pumpkin with Black Chick Peas" },
+            { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "Raw Banana with Tomato", items: [
+            { c: "Dish", n: "Idli" }, { c: "Dry", n: "Raw Banana with Tomato" },
+            { c: "Soup", n: "Sambar" }, { c: "Chutney", n: "Ground Nut Chutney" }]
+        }
+      },
+      thursday: {
+        breakfast: {
+          hero: "Hot Pongal", items: [
+            { c: "Dish 1", n: "Hot Pongal" }, { c: "Dish 2", n: "Uggani" },
+            { c: "Chutney", n: "Ground Nut Chutney" }, { c: "Sprouts", n: "Steamed Green Gram" },
+            { c: "Cereals", n: "Boiled Dalia" }]
+        },
+        lunch: {
+          hero: "Tomato Rice", rj: 1, items: [
+            { c: "Rice", n: "Tomato Rice" }, { c: "Dal", n: "Rajma", rj: 1 },
+            { c: "Dry", n: "Ivy Gourd with Tomato" }, { c: "Curd", n: "Curd" },
+            { c: "Rasam", n: "Dahi Kadi" }]
+        },
+        dinner: {
+          hero: "Dal Makhani", items: [
+            { c: "Dal", n: "Dal Makhani" }, { c: "Wet", n: "Pumpkin" },
+            { c: "Soup", n: "Sambar" }, { c: "Chutney", n: "Ground Nut Podi" }]
+        }
+      },
+      friday: {
+        breakfast: {
+          hero: "Kanchipuram Idli", items: [
+            { c: "Dish 1", n: "Kanchipuram Idli" }, { c: "Dish 2", n: "Dalia Upma" },
+            { c: "Soup", n: "Sambar" }, { c: "Sprouts", n: "Steamed Green Gram" },
+            { c: "Cereals", n: "Boiled Dalia" }]
+        },
+        lunch: {
+          hero: "Gongura Dal", items: [
+            { c: "Rice", n: "Veg Pulao" }, { c: "Dal", n: "Gongura Dal" },
+            { c: "Dry", n: "Cabbage with Tomato" }, { c: "Chutney", n: "Ridge Gourd Chutney" },
+            { c: "Dessert", n: "Semolina Payasam" }]
+        },
+        dinner: {
+          hero: "Black Chick Peas Curry", items: [
+            { c: "Rice", n: "Ragi Sangati" }, { c: "Dal", n: "Black Chick Peas Curry" },
+            { c: "Dry", n: "Bottle Gourd with Green Chilly" },
+            { c: "Rasam", n: "Rasam" }, { c: "Dessert", n: "Flax Seeds Peanut Laddu" }]
+        }
+      },
+      saturday: {
+        breakfast: {
+          hero: "Paneer Paratha", items: [
+            { c: "Dish 1", n: "Paneer Paratha" }, { c: "Dish 2", n: "Dahi Poha" },
+            { c: "Sprouts", n: "Steamed Green Gram" }, { c: "Cereals", n: "Boiled Dalia" },
+            { c: "Dry Fruit", n: "Dates" }]
+        },
+        lunch: {
+          hero: "Jowar Roti", items: [
+            { c: "Salad", n: "Peanut Chaat" }, { c: "Roti", n: "Jowar Roti" },
+            { c: "Rice", n: "Curd Rice" }, { c: "Dal", n: "Totakura Dal" },
+            { c: "Wet", n: "Potato & Cauliflower" }, { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "SattU Stuffed Roti", items: [
+            { c: "Roti", n: "SattU Stuffed Roti" }, { c: "Khichdi", n: "Masala Khichdi" },
+            { c: "Dal", n: "Mudda Pappu" }, { c: "Dry", n: "Potato & Brinjal Chokha" },
+            { c: "Dessert", n: "Lauki Halwa" }]
+        }
+      }
+    };
+
+    // ─────────────────────────────────────────────
+    // HELPERS
+    // ─────────────────────────────────────────────
+    function getWeek(date) {
+      const dow = new Date(2026, 5, date).getDay();
+      const sun = date - (dow === 0 ? 0 : dow);
+      if (sun <= 0 || sun === 14 || sun === 28) return 'A';
+      return 'B';
+    }
+    function getDayKey(date) { return DAYS[new Date(2026, 5, date).getDay()]; }
+    function getFullLabel(date) {
+      const d = new Date(2026, 5, date);
+      return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()] + ', Jun ' + date;
+    }
+    function yuktaharFor(date) {
+      return getWeek(date) === 'A' ? YA[getDayKey(date)] : YB[getDayKey(date)];
+    }
+    function kadambaFor(date) { return K[getDayKey(date)]; }
+
+    // ─────────────────────────────────────────────
+    // STATE
+    // ─────────────────────────────────────────────
+    let cur = 4;
+    const picks = {}; // "date-meal" -> "k"|"y"
+
+    // ─────────────────────────────────────────────
+    // WHEEL
+    // ─────────────────────────────────────────────
+    const wheelInner = document.getElementById('wheelInner');
+    const dateLabel = document.getElementById('dateLabel');
+
+    function buildWheel() {
+      wheelInner.innerHTML = '';
+      for (let d = 0; d <= 31; d++) {
+        const el = document.createElement('div');
+        el.className = 'wheel-item';
+        el.dataset.d = d;
+        el.textContent = d === 0 || d === 31 ? '' : d;
+        wheelInner.appendChild(el);
+      }
+    }
+
+    function positionWheel(date, animate) {
+      if (!animate) wheelInner.style.transition = 'none';
+      const idx = date; // item index = date (0-indexed list has blank at 0)
+      // center the active item: each item is 40px, active is 60px
+      // offset: track height=120, center=60. Item 0..date-1 are 40px each, active=60px center
+      const offset = 60 - (idx * 40 + 20); // 20 = half of 40
+      wheelInner.style.transform = `translateY(${offset}px)`;
+      setTimeout(() => { wheelInner.style.transition = ''; }, 10);
+
+      wheelInner.querySelectorAll('.wheel-item').forEach(el => {
+        const d = parseInt(el.dataset.d);
+        el.className = 'wheel-item';
+        if (d === date) el.classList.add('active');
+        else if (Math.abs(d - date) === 1) el.classList.add('near');
+      });
+    }
+
+    function hapticTick() {
+      // Lightweight haptic pulse where supported (mostly mobile browsers).
+      if (navigator.vibrate) navigator.vibrate(8);
+    }
+
+    function setDate(d, opts = {}) {
+      if (d < 1 || d > 30) return;
+      cur = d;
+      positionWheel(d, true);
+      dateLabel.textContent = getFullLabel(d);
+      renderMeals();
+      renderSummary();
+      if (opts.haptic) hapticTick();
+    }
+
+    buildWheel();
+    setDate(4);
+
+    document.getElementById('prevBtn').onclick = () => setDate(cur - 1, { haptic: true });
+    document.getElementById('nextBtn').onclick = () => setDate(cur + 1, { haptic: true });
+
+    // Drag / swipe on wheel
+    let dragStartY = null, dragStartDate = null;
+    const wt = document.getElementById('wheelTrack');
+    wt.addEventListener('mousedown', e => { dragStartY = e.clientY; dragStartDate = cur; });
+    window.addEventListener('mousemove', e => {
+      if (dragStartY === null) return;
+      const delta = Math.round((dragStartY - e.clientY) / 40);
+      const nd = Math.min(30, Math.max(1, dragStartDate + delta));
+      if (nd !== cur) setDate(nd, { haptic: true });
+    });
+    window.addEventListener('mouseup', () => { dragStartY = null; });
+    wt.addEventListener('touchstart', e => {
+      dragStartY = e.touches[0].clientY;
+      dragStartDate = cur;
+    }, { passive: true });
+    wt.addEventListener('touchmove', e => {
+      if (dragStartY === null) return;
+      e.preventDefault();
+      const delta = Math.round((dragStartY - e.touches[0].clientY) / 40);
+      const nd = Math.min(30, Math.max(1, dragStartDate + delta));
+      if (nd !== cur) setDate(nd, { haptic: true });
+    }, { passive: false });
+    wt.addEventListener('touchend', () => { dragStartY = null; });
+    wt.addEventListener('wheel', e => {
+      e.preventDefault();
+      setDate(cur + (e.deltaY > 0 ? 1 : -1), { haptic: true });
+    }, { passive: false });
+
+
+    // ─────────────────────────────────────────────
+    // RENDER MEALS
+    // ─────────────────────────────────────────────
+    function renderCard(meal, key, side) {
+      const selKey = cur + '-' + key;
+      const isSel = picks[selKey] === side;
+      const cls = isSel ? (side === 'k' ? 'sel-k' : 'sel-y') : '';
+      const hasNv = side === 'k' && !!meal.nv;
+      const label = side === 'k' ? (hasNv ? 'Kadamba NonVeg' : 'Kadamba') : 'Yuktahar';
+      const nvDot = hasNv ? '<span class="nvdot"></span>' : '';
+      const hasRj = meal.rj || meal.items.some(i => i.rj);
+
+      const itemsHtml = meal.items.map(i =>
+        `<div class="item-row ${i.nv ? 'nv' : ''} ${i.rj ? 'rj' : ''}">
+      <span class="item-cat">${i.c}</span>
+      <span class="item-name">${i.n}</span>
+    </div>`
+      ).join('');
+
+      return `
+    <div class="mess-card ${cls}" onclick="pick('${selKey}','${side}')">
+      <div class="card-top">
+        <div class="mess-name">${nvDot}${label}</div>
+        <div class="tick">✓</div>
+      </div>
+      <div class="hero-name">${meal.hero}</div>
+      <div class="items-list">${itemsHtml}</div>
+      ${hasRj ? '<div class="rajma-warn">⚠ Contains rajma</div>' : ''}
+    </div>`;
+    }
+
+    function renderMeals() {
+      const kDay = kadambaFor(cur);
+      const yDay = yuktaharFor(cur);
+      const meals = [
+        { key: 'breakfast', label: 'Breakfast' },
+        { key: 'lunch', label: 'Lunch' },
+        { key: 'dinner', label: 'Dinner' }
+      ];
+      document.getElementById('meals').innerHTML = meals.map(m => `
+    <div class="meal-block">
+      <div class="meal-label">${m.label}</div>
+      <div class="cards-row">
+        ${renderCard(kDay[m.key], m.key, 'k')}
+        ${renderCard(yDay[m.key], m.key, 'y')}
+      </div>
+    </div>`).join('');
+    }
+
+    function renderSummary() {
+      const names = { k: 'Kadamba', y: 'Yuktahar' };
+      document.getElementById('sumRows').innerHTML = ['breakfast', 'lunch', 'dinner'].map(m => {
+        const sel = picks[cur + '-' + m];
+        return `<div class="sum-row">
+      <span class="sum-meal">${m[0].toUpperCase() + m.slice(1)}</span>
+      <span class="sum-choice ${sel || 'none'}">${sel ? names[sel] : '—'}</span>
+    </div>`;
+      }).join('');
+    }
+
+    function pick(selKey, side) {
+      picks[selKey] = picks[selKey] === side ? undefined : side;
+      renderMeals();
+      renderSummary();
+    }
+  </script>
+</body>
+
+</html>
