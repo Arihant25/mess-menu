@@ -74,6 +74,12 @@
       user-select: none;
     }
 
+    .wheel-nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
     .wheel-track {
       position: relative;
       height: 120px;
@@ -136,34 +142,28 @@
       font-size: 1.4rem;
     }
 
-    .wheel-arrows {
-      display: flex;
-      gap: 48px;
-      margin-top: 8px;
-    }
-
     .wheel-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 1px solid color-mix(in oklab, var(--border) 70%, var(--text));
       background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
+      color: var(--text);
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.05rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.12s;
+      transition: border-color 0.18s ease;
     }
 
     .wheel-btn:hover {
-      background: var(--surface);
-      color: var(--text);
+      border-color: color-mix(in oklab, var(--text) 28%, var(--border));
     }
 
     .wheel-btn:active {
-      transform: scale(0.92);
+      border-color: color-mix(in oklab, var(--text) 28%, var(--border));
     }
 
     .date-label {
@@ -406,6 +406,16 @@
     }
 
     @media (max-width: 560px) {
+      .wheel-nav {
+        gap: 10px;
+      }
+
+      .wheel-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
       .hero-name {
         font-size: 0.9rem;
       }
@@ -422,12 +432,12 @@
   <p class="page-title">IIITH Mess &mdash; June 2026</p>
 
   <div class="wheel-wrap">
-    <div class="wheel-track" id="wheelTrack">
-      <div class="wheel-inner" id="wheelInner"></div>
-    </div>
-    <div class="wheel-arrows">
-      <button class="wheel-btn" id="prevBtn">&#8593;</button>
-      <button class="wheel-btn" id="nextBtn">&#8595;</button>
+    <div class="wheel-nav">
+      <button class="wheel-btn" id="prevBtn" aria-label="Previous day">&#8592;</button>
+      <div class="wheel-track" id="wheelTrack">
+        <div class="wheel-inner" id="wheelInner"></div>
+      </div>
+      <button class="wheel-btn" id="nextBtn" aria-label="Next day">&#8594;</button>
     </div>
     <div class="date-label" id="dateLabel"></div>
   </div>
@@ -945,7 +955,11 @@
     }
 
     buildWheel();
-    setDate(4);
+    const today = new Date();
+    const defaultDay = (today.getFullYear() === 2026 && today.getMonth() === 5)
+      ? Math.min(30, Math.max(1, today.getDate()))
+      : 1;
+    setDate(defaultDay);
 
     document.getElementById('prevBtn').onclick = () => setDate(cur - 1, { haptic: true });
     document.getElementById('nextBtn').onclick = () => setDate(cur + 1, { haptic: true });
