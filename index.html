@@ -455,145 +455,298 @@
     // ─────────────────────────────────────────────
     const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-    // Kadamba — same menu every week
-    const K = {
+    // Kadamba NonVeg — Week A (effective Jun 1, 14, 28)
+    const KA = {
       sunday: {
         breakfast: {
-          hero: "Pongal + Boiled Eggs", nv: "Boiled Eggs", items: [
-            { c: "Dish 1", n: "Wada" }, { c: "Dish 2", n: "Pongal" }, { c: "Soup", n: "Sambar" },
-            { c: "Sprouts", n: "Boiled Black Channa" }, { c: "Cereals", n: "Muesli" },
+          hero: "Dosa + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Dosa" }, { c: "Dish 2", n: "Upma" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Muesli" }, { c: "Sprouts", n: "Boiled Black Channa" },
             { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
         },
         lunch: {
           hero: "Chicken Dum Biryani", nv: "Chicken Dum Biryani", items: [
-            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Dal", n: "Palakura Pappu" },
-            { c: "Wet", n: "Mirchi Ka Salan" }, { c: "Raita", n: "Raitha & Curd" },
-            { c: "Dessert", n: "Fruit Custard" }]
+            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Veg", n: "Veg Dum Biryani" },
+            { c: "Dal", n: "Palakura Pappu" }, { c: "Wet", n: "Mirchi Ka Salan" },
+            { c: "Raita", n: "Raitha & Curd" }, { c: "Dessert", n: "Fruit Custard" },
+            { c: "Drink", n: "Lemonade with Sabja" }]
+        },
+        dinner: {
+          hero: "Soya Tomato Pulao", nv: null, items: [
+            { c: "Rice", n: "Soya Tomato Pulao" }, { c: "Dal", n: "Thotakura Pappu" },
+            { c: "Wet", n: "Drumstick Tomato Curry" }, { c: "Dry", n: "Aratikaya Fry" },
+            { c: "Rasam", n: "Rasam" }]
+        }
+      },
+      monday: {
+        breakfast: {
+          hero: "Veg Idly + Omelette", nv: "Omelette", items: [
+            { c: "Dish 1", n: "Veg Idly" }, { c: "Dish 2", n: "Uggani" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Chocos" }, { c: "Sprouts", n: "Moongdal Sprouts" },
+            { c: "Non-Veg", n: "Omelette", nv: 1 }]
+        },
+        lunch: {
+          hero: "Mix Veg Korma", nv: null, items: [
+            { c: "Rice", n: "Jeera Pulao" }, { c: "Dal", n: "Dosakaya Pappu" },
+            { c: "Wet", n: "Mix Veg Korma" }, { c: "Dry", n: "Cabbage Poriyal" },
+            { c: "Rasam", n: "Mamidakaya Pulusu" }, { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "Kadai Chicken", nv: "Kadai Chicken", items: [
+            { c: "Rice", n: "Bagara Rice" }, { c: "Dal", n: "Mudda Pappu" },
+            { c: "Wet", n: "Chole Masala" }, { c: "Dry", n: "Mix Veg Poriyal" },
+            { c: "Rasam", n: "Pachi Pulusu" }, { c: "Non-Veg", n: "Kadai Chicken", nv: 1 }]
+        }
+      },
+      tuesday: {
+        breakfast: {
+          hero: "Punugulu + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Punugulu" }, { c: "Dish 2", n: "Tomato Bath" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Muesli" }, { c: "Sprouts", n: "Boiled Chickpeas" },
+            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+        },
+        lunch: {
+          hero: "Lobiya Masala", nv: null, items: [
+            { c: "Rice", n: "Lemon Rice" }, { c: "Dal", n: "Tomato Pappu" },
+            { c: "Wet", n: "Lobiya Masala" }, { c: "Dry", n: "Dondakaya Fry" },
+            { c: "Rasam", n: "Sambar" }, { c: "Dessert", n: "Semiya Kheer" }, { c: "Drink", n: "Lassi" }]
+        },
+        dinner: {
+          hero: "Paneer Butter Masala", nv: null, items: [
+            { c: "Rice", n: "Kabhuli Channa Pulao" }, { c: "Dal", n: "Palakura Pappu" },
+            { c: "Wet", n: "Paneer Butter Masala" }, { c: "Dry", n: "Vankaya Fry" },
+            { c: "Rasam", n: "Rasam" }, { c: "Dessert", n: "Ravva Laddu" }]
+        }
+      },
+      wednesday: {
+        breakfast: {
+          hero: "Raagi Idly + Omelette", nv: "Omelette", items: [
+            { c: "Dish 1", n: "Raagi Idly" }, { c: "Dish 2", n: "Semiya Upma" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Corn Flakes" }, { c: "Sprouts", n: "Boiled Peanuts" },
+            { c: "Non-Veg", n: "Omelette", nv: 1 }]
+        },
+        lunch: {
+          hero: "Chicken Dum Biryani", nv: "Chicken Dum Biryani", items: [
+            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Veg", n: "Veg Dum Biryani" },
+            { c: "Dal", n: "Menthikura Pappu" }, { c: "Wet", n: "Mirchi Ka Salan" },
+            { c: "Raita", n: "Raitha & Curd" }, { c: "Drink", n: "Roohafza" }]
+        },
+        dinner: {
+          hero: "Rajmah Masala", nv: null, items: [
+            { c: "Rice", n: "Veg Pulao" }, { c: "Dal", n: "Dosakaya Pappu" },
+            { c: "Wet", n: "Rajmah Masala", rj: 1 }, { c: "Dry", n: "Aloo Capsicum" },
+            { c: "Rasam", n: "Sambar" }]
+        }
+      },
+      thursday: {
+        breakfast: {
+          hero: "Wada + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Wada" }, { c: "Dish 2", n: "Poha" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Oats" }, { c: "Sprouts", n: "Moongdal Sprouts" },
+            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+        },
+        lunch: {
+          hero: "Gongura Rice", nv: null, items: [
+            { c: "Rice", n: "Gongura Rice" }, { c: "Dal", n: "Mamidikaya Pappu" },
+            { c: "Wet", n: "Bhendi Masala" }, { c: "Dry", n: "Aloo Fry" },
+            { c: "Rasam", n: "Pepper Rasam" }, { c: "Drink", n: "Jal Jeera" }]
+        },
+        dinner: {
+          hero: "Egg Bhurji", nv: "Egg Bhurji", items: [
+            { c: "Rice", n: "Brown Onion Pulao" }, { c: "Dal", n: "Tomato Pappu" },
+            { c: "Wet", n: "Mix Veg Korma" }, { c: "Dry", n: "Cabbage Poriyal" },
+            { c: "Rasam", n: "Sambar" }, { c: "Dessert", n: "Bread Halwa" },
+            { c: "Non-Veg", n: "Egg Bhurji", nv: 1 }]
+        }
+      },
+      friday: {
+        breakfast: {
+          hero: "Uttappam + Omelette", nv: "Omelette", items: [
+            { c: "Dish 1", n: "Uttappam" }, { c: "Dish 2", n: "Dhaliya Bath" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Corn Flakes" }, { c: "Sprouts", n: "Black Channa Sprout" },
+            { c: "Non-Veg", n: "Omelette", nv: 1 }]
+        },
+        lunch: {
+          hero: "Vangi Bath", nv: null, items: [
+            { c: "Rice", n: "Vangi Bath" }, { c: "Dal", n: "Sorakkai Pappu" },
+            { c: "Wet", n: "Rajmah Masala", rj: 1 }, { c: "Dry", n: "Soya Mutter Kheema" },
+            { c: "Rasam", n: "Majjiga Pulusu" }, { c: "Dessert", n: "Chakkara Pongal" },
+            { c: "Drink", n: "Buttermilk" }]
+        },
+        dinner: {
+          hero: "Chicken Curry", nv: "Chicken Curry", items: [
+            { c: "Rice", n: "Raagi Sankati" }, { c: "Dal", n: "Mixed Greens Pappu" },
+            { c: "Wet", n: "Chhamgadda Pulusu" }, { c: "Dry", n: "Aloo Vankaya Fry" },
+            { c: "Rasam", n: "Pepper Rasam" }, { c: "Non-Veg", n: "Chicken Curry", nv: 1 }]
+        }
+      },
+      saturday: {
+        breakfast: {
+          hero: "Pesarattu + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Pesarattu" }, { c: "Dish 2", n: "Upma" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Oats" }, { c: "Sprouts", n: "Boiled Chickpeas" },
+            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+        },
+        lunch: {
+          hero: "Chole Masala", nv: null, items: [
+            { c: "Rice", n: "Mutter Pulao" }, { c: "Dal", n: "Palakura Pappu" },
+            { c: "Wet", n: "Chole Masala" }, { c: "Dry", n: "Beetroot Poriyal" },
+            { c: "Rasam", n: "Sambar" }, { c: "Drink", n: "Raagi Ambali" }]
+        },
+        dinner: {
+          hero: "Mutter Paneer", nv: null, items: [
+            { c: "Rice", n: "Jeera Pulao" }, { c: "Dal", n: "Menthikura Pappu" },
+            { c: "Wet", n: "Mutter Paneer" }, { c: "Dry", n: "Gokarakaya Fry" },
+            { c: "Rasam", n: "Pachi Pulusu" }, { c: "Dessert", n: "Atukula Payasam" }]
+        }
+      }
+    };
+
+    // Kadamba NonVeg — Week B (effective Jun 7, 21)
+    const KB = {
+      sunday: {
+        breakfast: {
+          hero: "Wada + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Wada" }, { c: "Dish 2", n: "Pongal" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Muesli" }, { c: "Sprouts", n: "Boiled Black Channa" },
+            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+        },
+        lunch: {
+          hero: "Chicken Dum Biryani", nv: "Chicken Dum Biryani", items: [
+            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Veg", n: "Paneer Biryani" },
+            { c: "Dal", n: "Palakura Pappu" }, { c: "Wet", n: "Mirchi Ka Salan" },
+            { c: "Raita", n: "Raitha & Curd" }, { c: "Dessert", n: "Fruit Custard" },
+            { c: "Drink", n: "Nimbu Paani" }]
         },
         dinner: {
           hero: "Vangi Bath", nv: null, items: [
-            { c: "Rice", n: "Vangi Bath" }, { c: "Dal", n: "Tomato Pappu" },
+            { c: "Rice", n: "Vangi Bath" }, { c: "Dal", n: "Munagakaya Pappu" },
             { c: "Wet", n: "Rajma Masala", rj: 1 }, { c: "Dry", n: "Cabbage Pesarapappu" },
             { c: "Rasam", n: "Pachi Pulusu" }]
         }
       },
       monday: {
         breakfast: {
-          hero: "Pesarattu + Omelette", nv: "Omelette", items: [
-            { c: "Dish 1", n: "Pesarattu" }, { c: "Dish 2", n: "Upma" }, { c: "Soup", n: "Sambar" },
-            { c: "Sprouts", n: "Moongdal Sprouts" }, { c: "Non-Veg", n: "Omelette", nv: 1 }]
+          hero: "Idly + Omelette", nv: "Omelette", items: [
+            { c: "Dish 1", n: "Idly" }, { c: "Dish 2", n: "Semiya Bath" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Chocos" }, { c: "Sprouts", n: "Moongdal Sprouts" },
+            { c: "Non-Veg", n: "Omelette", nv: 1 }]
         },
         lunch: {
           hero: "Meal Maker Curry", nv: null, items: [
             { c: "Rice", n: "Jeera Rice" }, { c: "Dal", n: "Mamidikaya Pappu" },
             { c: "Wet", n: "Meal Maker Curry" }, { c: "Dry", n: "Aloo Fry" },
-            { c: "Rasam", n: "Dappalam" }, { c: "Drink", n: "Buttermilk" }]
+            { c: "Rasam", n: "Pappu Charu" }, { c: "Drink", n: "Buttermilk" }]
         },
         dinner: {
-          hero: "Kadai Chicken", nv: "Kadai Chicken", items: [
-            { c: "Rice", n: "Tomato Pulao" }, { c: "Dal", n: "Sorakai Kootu" },
+          hero: "Chicken Chetinadu", nv: "Chicken Chetinadu", items: [
+            { c: "Rice", n: "Channa Pulao" }, { c: "Dal", n: "Menthikura Pappu" },
             { c: "Wet", n: "Dosakaya Tomato Curry" }, { c: "Dry", n: "Vankaya Fry" },
-            { c: "Dessert", n: "Saboodhana Kheer" }, { c: "Non-Veg", n: "Kadai Chicken", nv: 1 }]
+            { c: "Rasam", n: "Pepper Rasam" }, { c: "Dessert", n: "Sago Semiya Payasam" },
+            { c: "Non-Veg", n: "Chicken Chetinadu", nv: 1 }]
         }
       },
       tuesday: {
         breakfast: {
-          hero: "Mysore Bonda + Boiled Eggs", nv: "Boiled Eggs", items: [
-            { c: "Dish 1", n: "Mysore Bonda" }, { c: "Dish 2", n: "Oats Upma" }, { c: "Soup", n: "Sambar" },
-            { c: "Sprouts", n: "Boiled Chickpeas" }, { c: "Cereals", n: "Muesli" },
-            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+          hero: "Bhatura + Scrambled Egg", nv: "Scrambled Egg", items: [
+            { c: "Dish 1", n: "Bhatura" }, { c: "Dish 2", n: "Tomato Upma" }, { c: "Soup", n: "Chole Masala" },
+            { c: "Cereals", n: "Muesli" }, { c: "Sprouts", n: "Boiled Chickpeas" },
+            { c: "Non-Veg", n: "Scrambled Egg", nv: 1 }]
         },
         lunch: {
           hero: "Gutti Vankaya Masala", nv: null, items: [
-            { c: "Rice", n: "Pulihora (Tamarind Rice)" }, { c: "Dal", n: "Dosakaya Pappu" },
+            { c: "Rice", n: "Tomato Pulao" }, { c: "Dal", n: "Dosakaya Pappu" },
             { c: "Wet", n: "Gutti Vankaya Masala" }, { c: "Dry", n: "Dondakaya Fry" },
-            { c: "Dessert", n: "Ravva Kesari" }, { c: "Drink", n: "Lassi" }]
+            { c: "Rasam", n: "Majjiga Pulusu" }, { c: "Dessert", n: "Ravva Kesari" },
+            { c: "Drink", n: "Lassi" }]
         },
         dinner: {
-          hero: "Chamagadda Pulusu", nv: null, items: [
-            { c: "Rice", n: "Kichidi (Dry Pulao)" }, { c: "Dal", n: "Palakura Pappu" },
-            { c: "Wet", n: "Chamagadda Pulusu (Arvi)" }, { c: "Dry", n: "Gokarakaya Dum Fry" },
-            { c: "Rasam", n: "Rasam" }]
+          hero: "Kichidi (Dry Pulao)", nv: null, items: [
+            { c: "Rice", n: "Kichidi (Dry Pulao)" }, { c: "Dal", n: "Gongura Pappu" },
+            { c: "Wet", n: "Mix Veg Curry" }, { c: "Dry", n: "Gokarakaya Dum Fry" },
+            { c: "Rasam", n: "Sambar" }]
         }
       },
       wednesday: {
         breakfast: {
-          hero: "Idly + Boiled Eggs", nv: "Boiled Eggs", items: [
-            { c: "Dish 1", n: "Idly" }, { c: "Dish 2", n: "Semiya Bath" }, { c: "Soup", n: "Sambar" },
-            { c: "Sprouts", n: "Boiled Peanuts" }, { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
+          hero: "Set Dosa + Boiled Eggs", nv: "Boiled Eggs", items: [
+            { c: "Dish 1", n: "Set Dosa" }, { c: "Dish 2", n: "Poha" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Chocos" }, { c: "Sprouts", n: "Boiled Peanuts" },
+            { c: "Non-Veg", n: "Boiled Eggs", nv: 1 }]
         },
         lunch: {
           hero: "Chicken Dum Biryani", nv: "Chicken Dum Biryani", items: [
-            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Dal", n: "Tomato Pappu" },
-            { c: "Wet", n: "Mirchi Ka Salan" }, { c: "Raita", n: "Raitha & Curd" },
-            { c: "Drink", n: "Shabja Sherbat" }]
+            { c: "Biryani", n: "Chicken Dum Biryani", nv: 1 }, { c: "Veg", n: "Veg Dum Biryani" },
+            { c: "Dal", n: "Tomato Pappu" }, { c: "Wet", n: "Mirchi Ka Salan" },
+            { c: "Raita", n: "Raitha & Curd" }, { c: "Drink", n: "Shabja Sherbat" }]
         },
         dinner: {
           hero: "Pudina Pulao", nv: null, items: [
-            { c: "Rice", n: "Pudina Pulao" }, { c: "Dal", n: "Masala Pappu" },
-            { c: "Wet", n: "Aloo Tomato Kura" }, { c: "Dry", n: "Mix Veg Poriyal" },
-            { c: "Dessert", n: "Chakkera Pongal" }, { c: "Soup", n: "Sambar" }]
+            { c: "Rice", n: "Pudina Pulao" }, { c: "Dal", n: "Pesarapappu (Moong Dal)" },
+            { c: "Wet", n: "Lobiya Masala" }, { c: "Dry", n: "Mix Veg Poriyal" },
+            { c: "Rasam", n: "Tomato Rasam" }, { c: "Dessert", n: "Chakkera Pongal" }]
         }
       },
       thursday: {
         breakfast: {
-          hero: "Uttappam + Omelette", nv: "Omelette", items: [
-            { c: "Dish 1", n: "Uttappam" }, { c: "Dish 2", n: "Tomato Bath" },
-            { c: "Cereals", n: "Oats" }, { c: "Sprouts", n: "Moongdal Sprouts" },
+          hero: "Pesarattu + Omelette", nv: "Omelette", items: [
+            { c: "Dish 1", n: "Pesarattu" }, { c: "Dish 2", n: "Upma" }, { c: "Soup", n: "Aloo Baaji" },
+            { c: "Cereals", n: "Muesli" }, { c: "Sprouts", n: "Moongdal Sprouts" },
             { c: "Non-Veg", n: "Omelette", nv: 1 }]
         },
         lunch: {
           hero: "Bisibele Bath", nv: null, items: [
             { c: "Rice", n: "Bisibele Bath" }, { c: "Dal", n: "Sorakaya Pappu" },
-            { c: "Wet", n: "Rajma Masala", rj: 1 }, { c: "Dry", n: "Kandagadda Fry (Yam)" },
-            { c: "Rasam", n: "Tomato Rasam" }, { c: "Drink", n: "Buttermilk" }]
+            { c: "Wet", n: "Rajma Masala", rj: 1 }, { c: "Dry", n: "Kanda Bachali Fry (Yam)" },
+            { c: "Rasam", n: "Tomato Rasam" }, { c: "Dessert", n: "Dhaliya Kesari" },
+            { c: "Drink", n: "Buttermilk" }]
         },
         dinner: {
           hero: "Egg Curry", nv: "Egg Curry", items: [
             { c: "Rice", n: "Bagara Rice" }, { c: "Dal", n: "Chukkakura Pappu" },
-            { c: "Wet", n: "Mix Veg Korma" }, { c: "Dry", n: "Beerakaya Fry" },
-            { c: "Non-Veg", n: "Egg Curry", nv: 1 }]
+            { c: "Wet", n: "Aloo Capsicum Tomato Curry" }, { c: "Dry", n: "Kakarakaya Fry" },
+            { c: "Rasam", n: "Pachi Pulusu" }, { c: "Non-Veg", n: "Kodiguddu Pulusu (Egg)", nv: 1 }]
         }
       },
       friday: {
         breakfast: {
           hero: "Tatte Idly + Boiled Egg", nv: "Boiled Egg", items: [
             { c: "Dish 1", n: "Tatte Idly" }, { c: "Dish 2", n: "Uggani" },
-            { c: "Chutney", n: "Coconut Chutney" }, { c: "Sprouts", n: "Black Channa Sprout" },
-            { c: "Non-Veg", n: "Boiled Egg", nv: 1 }]
+            { c: "Chutney", n: "Green Chutney" }, { c: "Cereals", n: "Chocos" },
+            { c: "Sprouts", n: "Black Channa Sprout" }, { c: "Non-Veg", n: "Boiled Egg", nv: 1 }]
         },
         lunch: {
           hero: "Avial", nv: null, items: [
             { c: "Rice", n: "Aloo ki Tahiri" }, { c: "Dal", n: "Cabbage Pappu" },
-            { c: "Wet", n: "Avial" }, { c: "Dry", n: "Banana Chips Fry" },
-            { c: "Rasam", n: "Pineapple Rasam" }, { c: "Dessert", n: "Semiya Payasam" },
-            { c: "Drink", n: "Jaljeera" }]
+            { c: "Wet", n: "Avial" }, { c: "Dry", n: "Aloo Vankaya Dry" },
+            { c: "Rasam", n: "Sambar" }, { c: "Drink", n: "Jaljeera" }]
         },
         dinner: {
-          hero: "Chicken Curry", nv: "Chicken Curry", items: [
-            { c: "Rice", n: "Raagi Sankati" }, { c: "Dal", n: "Gongura Pappu" },
-            { c: "Wet", n: "Kadala Curry" }, { c: "Dry", n: "Aloo Jeera" },
-            { c: "Soup", n: "Sambar" }, { c: "Non-Veg", n: "Chicken Curry", nv: 1 }]
+          hero: "Andhra Chicken Curry", nv: "Andhra Chicken Curry", items: [
+            { c: "Rice", n: "Raagi Sankati" }, { c: "Dal", n: "Masala Pappu" },
+            { c: "Wet", n: "Kadala Curry" }, { c: "Dry", n: "Aloo Palak" },
+            { c: "Rasam", n: "Coconut Rasam" }, { c: "Dessert", n: "Gulab Jamoon" },
+            { c: "Non-Veg", n: "Andhra Chicken Curry", nv: 1 }]
         }
       },
       saturday: {
         breakfast: {
-          hero: "Poori + Scrambled Egg", nv: "Scrambled Egg", items: [
-            { c: "Dish 1", n: "Poori" }, { c: "Dish 2", n: "Dhaliya Upma" },
-            { c: "Side", n: "Aloo Bhaji" }, { c: "Sprouts", n: "Boiled Chickpeas" },
-            { c: "Non-Veg", n: "Scrambled Egg", nv: 1 }]
+          hero: "Onion Punugulu + Egg Burjee", nv: "Egg Burjee", items: [
+            { c: "Dish 1", n: "Onion Punugulu" }, { c: "Dish 2", n: "Dhaliya Upma" }, { c: "Soup", n: "Sambar" },
+            { c: "Cereals", n: "Corn Flakes" }, { c: "Sprouts", n: "Boiled Chickpeas" },
+            { c: "Non-Veg", n: "Egg Burjee", nv: 1 }]
         },
         lunch: {
           hero: "Chole Masala", nv: null, items: [
-            { c: "Rice", n: "Veg Pulao" }, { c: "Dal", n: "Tomato Pappu" },
-            { c: "Wet", n: "Chole Masala" }, { c: "Dry", n: "Vankaya Aloo Dry" },
-            { c: "Rasam", n: "Ginger Rasam" }, { c: "Drink", n: "Lassi" }]
+            { c: "Rice", n: "Veg Pulao" }, { c: "Dal", n: "Thotakura Pappu" },
+            { c: "Wet", n: "Chole Masala" }, { c: "Rasam", n: "Ginger Rasam" },
+            { c: "Dessert", n: "Bread Halwa" }, { c: "Drink", n: "Lassi" }]
         },
         dinner: {
           hero: "Kadai Paneer", nv: null, items: [
             { c: "Rice", n: "Jeera Pulao" }, { c: "Dal", n: "Mixed Greens Pappu" },
             { c: "Wet", n: "Kadai Paneer" }, { c: "Dry", n: "Raw Banana Dry" },
-            { c: "Rasam", n: "Pachi Pulusu" }, { c: "Dessert", n: "Kala Jamoon" }]
+            { c: "Rasam", n: "Sambar" }]
         }
       }
     };
@@ -718,10 +871,10 @@
       },
       saturday: {
         breakfast: {
-          hero: "Aloo Paratha", items: [
-            { c: "Dish 1", n: "Aloo Paratha" }, { c: "Dish 2", n: "Millet Poha" },
+          hero: "Veg Idli + Semia Upma", items: [
+            { c: "Dish 1", n: "Veg Idli" }, { c: "Dish 2", n: "Semia Upma" }, { c: "Soup", n: "Sambar" },
             { c: "Sprouts", n: "Steamed Black Chick Peas" }, { c: "Cereals", n: "Ragi Malt" },
-            { c: "Dry Fruit", n: "Dates" }]
+            { c: "Dry Fruit", n: "Soaked Almond" }]
         },
         lunch: {
           hero: "Lobia Chaat + Bajra Roti", items: [
@@ -840,10 +993,10 @@
       },
       friday: {
         breakfast: {
-          hero: "Kanchipuram Idli", items: [
-            { c: "Dish 1", n: "Kanchipuram Idli" }, { c: "Dish 2", n: "Dalia Upma" },
-            { c: "Soup", n: "Sambar" }, { c: "Sprouts", n: "Steamed Green Gram" },
-            { c: "Cereals", n: "Boiled Dalia" }]
+          hero: "Paneer Paratha", items: [
+            { c: "Dish 1", n: "Paneer Paratha" }, { c: "Dish 2", n: "Dahi Poha" },
+            { c: "Sprouts", n: "Steamed Green Gram" }, { c: "Cereals", n: "Boiled Dalia" },
+            { c: "Dry Fruit", n: "Dates" }]
         },
         lunch: {
           hero: "Gongura Dal", items: [
@@ -860,10 +1013,10 @@
       },
       saturday: {
         breakfast: {
-          hero: "Paneer Paratha", items: [
-            { c: "Dish 1", n: "Paneer Paratha" }, { c: "Dish 2", n: "Dahi Poha" },
+          hero: "Kanchipuram Idli", items: [
+            { c: "Dish 1", n: "Kanchipuram Idli" }, { c: "Dish 2", n: "Dalia Upma" }, { c: "Soup", n: "Sambar" },
             { c: "Sprouts", n: "Steamed Green Gram" }, { c: "Cereals", n: "Boiled Dalia" },
-            { c: "Dry Fruit", n: "Dates" }]
+            { c: "Dry Fruit", n: "Soaked Almond" }]
         },
         lunch: {
           hero: "Jowar Roti", items: [
@@ -897,7 +1050,9 @@
     function yuktaharFor(date) {
       return getWeek(date) === 'A' ? YA[getDayKey(date)] : YB[getDayKey(date)];
     }
-    function kadambaFor(date) { return K[getDayKey(date)]; }
+    function kadambaFor(date) {
+      return getWeek(date) === 'A' ? KA[getDayKey(date)] : KB[getDayKey(date)];
+    }
 
     // ─────────────────────────────────────────────
     // STATE
