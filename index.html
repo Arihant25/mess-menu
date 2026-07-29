@@ -328,7 +328,7 @@ var APPEAL=[
   [/paneer\s*biry|veg\s*(dum\s*)?biry|biry/i,80],
   [/pizza|burger|pasta|sandwich|frankie|roll/i,78],
   [/chole\s*bhat|bhatur|poori|puri/i,76],
-  [/dosa|uttapam|utappam|pesarattu/i,74],
+  [/\bdosa\b|\bdosas\b|uttapam|utappam|pesarattu/i,74],
   [/gulab\s*jamun|ice\s*cream|brownie|cake|jalebi|rasmalai|rasgulla/i,72],
   [/halwa|kesari|payasam|kheer|laddu|barfi|sheera|double\s*ka\s*meetha/i,70],
   [/samosa|pakoda|pakora|bajji|bonda|vada|maggi|maggie|cutlet|puff/i,68],
@@ -343,9 +343,16 @@ var APPEAL=[
   [/curd|butter\s*milk|buttermilk|milk|lassi/i,30],
   [/salad|pickle|chutney|papad|fryum|podi|jaggery|haldi|tea|coffee|water/i,18]
 ];
-function appealOf(n){
-  for(var i=0;i<APPEAL.length;i++) if(APPEAL[i][0].test(n)) return APPEAL[i][1];
-  return 42; // an unrecognised cooked dish outranks staples but not a headliner
+// A side is a side however it is named: "Pasta Salad" and "Dosakaya Chutney"
+// must never take the headline off a real dish.
+var SIDE_CATS={'Salad':1,'Pickle/Fresh Chutney':1,'Fryums/Papad':1,
+  'Additional Accompaniment':1,'Curd/Raitha':1,'Beverage':1};
+function appealOf(it){
+  var n=typeof it==='string'?it:it.n, c=typeof it==='string'?'':it.c;
+  var s=42; // an unrecognised cooked dish outranks staples but not a headliner
+  for(var i=0;i<APPEAL.length;i++) if(APPEAL[i][0].test(n)){s=APPEAL[i][1];break;}
+  if(SIDE_CATS[c] && s>25) s=25;
+  return s;
 }
 
 function pad(n){return n<10?'0'+n:''+n;}
@@ -467,7 +474,7 @@ function sig(list){return list?list.map(function(i){return i.c+'|'+i.n.trim().to
 function heroOf(list){
   var best=list[0],bs=-1;
   list.forEach(function(it){
-    var s=appealOf(it.n);
+    var s=appealOf(it);
     if(s>bs){bs=s;best=it;}
   });
   return best;
