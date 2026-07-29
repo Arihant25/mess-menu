@@ -33,13 +33,3 @@ category, two rotis, one starch base and one dairy rather than all of them.
 Real portion size varies more than the model does. Compare messes against each
 other on a given day; don't count calories with it.
 
-## Notes
-
-Opening days are empirical. The API's timings endpoint reports some messes as
-open when registration then refuses with `mess-closed`, so the table follows
-what registration actually accepts.
-
-Menu data is embedded at build time from the IIIT-H mess API, one entry per
-Sunday-anchored week. The page picks the week containing the selected date, so
-it stays correct across months without edits — but it only covers the weeks that
-were fetched. Re-run the extraction to extend it.

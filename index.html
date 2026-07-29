@@ -89,6 +89,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.45;font-optical-sizing:auto}
+.when{min-width:0}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:2px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
@@ -127,30 +128,32 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 .sheet{padding:0 var(--gut) 20px;margin-top:28px}
 .cols{display:grid;gap:0 1px;background:var(--hair);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.col{background:var(--paper);padding:15px 14px 18px;min-width:0;text-align:left;position:relative;transition:background .14s;display:block;width:100%}
+/* Every column spans the same row tracks, so the category rules line up
+   horizontally even when one header runs an extra line. */
+.col{display:grid;grid-row:1/-1;grid-template-rows:subgrid;background:var(--paper);padding:15px 14px 18px;min-width:0;text-align:left;position:relative;transition:background .14s;width:100%}
+@supports not (grid-template-rows:subgrid){.col{display:block}}
 .col:hover{background:var(--card)}
 .col[aria-pressed="true"]{background:var(--card)}
 .col[aria-pressed="true"]::after{content:"";position:absolute;inset:0;border:2px solid var(--mc);pointer-events:none}
-.chead{border-bottom:1px solid var(--rule);padding-bottom:10px;margin-bottom:12px;display:flex;align-items:flex-start;gap:8px}
+.chead{border-bottom:1px solid var(--rule);padding-bottom:10px;display:flex;align-items:flex-start;gap:8px;align-self:start}
 .cnamewrap{min-width:0;flex:1}
 .cname{font-family:var(--f-disp);font-weight:800;font-stretch:84%;font-size:15.5px;letter-spacing:-.02em;line-height:1.14;display:flex;align-items:baseline;gap:7px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--mc);flex:none}
-.calso{font-family:var(--f-mono);font-size:9px;letter-spacing:.05em;color:var(--ink3);margin-top:5px;text-transform:uppercase;line-height:1.5}
 .tick{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--mc);color:var(--paper);opacity:0;transition:opacity .14s;flex:none;font-family:var(--f-mono)}
 .col[aria-pressed="true"] .tick{opacity:1}
-.nut{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin:-4px 0 13px;font-family:var(--f-mono);font-size:10px;letter-spacing:.04em;color:var(--ink3)}
-.nut b{font-size:13px;font-weight:700;color:var(--ink2);letter-spacing:-.01em}
-.nut .macro{white-space:nowrap}
-.nut .est{opacity:.7}
+.nut{padding:11px 0 0;font-family:var(--f-mono);font-size:10px;letter-spacing:.02em;color:var(--ink3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;align-self:start}
+.nut b{font-size:12.5px;font-weight:700;color:var(--ink2);letter-spacing:-.01em}
+.nut i{font-style:normal;opacity:.55}
+.heroblk{padding:13px 0 14px;align-self:start}
+.star{color:var(--star);font-size:12px;vertical-align:2px;margin-left:6px;letter-spacing:0}
 .herolab{font-family:var(--f-mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
-.hero{font-family:var(--f-body);font-size:clamp(18px,2vw,24px);line-height:1.15;letter-spacing:-.014em;font-weight:400;text-wrap:balance}
-.rows{margin-top:14px}
+.hero{font-family:var(--f-body);font-size:17px;line-height:1.25;letter-spacing:-.01em;font-weight:500;text-wrap:balance}
 .row{padding:6px 0;border-top:1px solid var(--hair)}
-.row:first-child{border-top:0}
 .rlab{font-family:var(--f-mono);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:2px}
 .rval{font-size:14.5px;line-height:1.32;letter-spacing:-.005em}
 .i+.i::before{content:" · ";color:var(--ink3)}
-.empty{color:var(--ink3)}
+.empty{color:var(--ink3);opacity:.4;font-size:12px}
+.row.void .rlab{opacity:.45}
 .closed{margin-top:18px;font-family:var(--f-mono);font-size:10px;letter-spacing:.06em;color:var(--ink3);text-transform:uppercase;line-height:1.8}
 .closed b{color:var(--ink2);font-weight:500}
 .nodata{padding:48px 0;text-align:center;color:var(--ink2);font-size:17px;border-top:1px solid var(--rule)}
@@ -170,10 +173,24 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .legend{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:10px}
 
 @media (max-width:880px){
-  .cols{gap:1px 0;grid-template-columns:1fr !important}
+  /* Stacked cards: drop the shared row tracks or every column would be
+     placed into the same single column and overlap. */
+  /* minmax(0,1fr), not 1fr — a bare 1fr floors at min-content, and the
+     nowrap nutrition line would then push the page wider than the screen. */
+  .cols{gap:1px 0;grid-template-columns:minmax(0,1fr) !important;grid-template-rows:none !important}
+  .col{display:block;grid-row:auto}
+  .chead{margin-bottom:2px}
   .rail{grid-template-columns:repeat(2,1fr)}
   .slot:nth-child(2){border-right:0}
   .slot:nth-child(-n+2){border-bottom:1px solid var(--hair)}
+}
+@media (max-width:560px){
+  .top{gap:8px}
+  #stamp{display:none}
+  .datebar{gap:12px}
+  .nav{gap:5px}
+  .nav button{width:34px;height:34px}
+  .nav .today{height:34px;padding:0 13px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
@@ -228,10 +245,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   </ul>
   <h2>Meal times</h2>
   <ul>
-    <li>Breakfast 06:30–10:30</li>
-    <li>Lunch 11:30–15:30</li>
-    <li>Snacks 16:45–18:15 (Kadamba Veg and Yuktāhār only)</li>
-    <li>Dinner 18:30–22:30</li>
+    <li>Breakfast 07:30–09:30</li>
+    <li>Lunch 12:30–14:30</li>
+    <li>Snacks 17:00–18:00 (Kadamba Veg and Yuktāhār only)</li>
+    <li>Dinner 19:30–21:30</li>
   </ul>
 </div>
 </noscript>
@@ -265,10 +282,10 @@ var MESS=[
 var MESSBY={};MESS.forEach(function(m){MESSBY[m.id]=m;});
 
 var MEALS=[
-  {id:'breakfast',name:'Breakfast',from:'06:30',to:'10:30'},
-  {id:'lunch',name:'Lunch',from:'11:30',to:'15:30'},
-  {id:'snacks',name:'Snacks',from:'16:45',to:'18:15'},
-  {id:'dinner',name:'Dinner',from:'18:30',to:'22:30'}
+  {id:'breakfast',name:'Breakfast',from:'07:30',to:'09:30'},
+  {id:'lunch',name:'Lunch',from:'12:30',to:'14:30'},
+  {id:'snacks',name:'Snacks',from:'17:00',to:'18:00'},
+  {id:'dinner',name:'Dinner',from:'19:30',to:'21:30'}
 ];
 var DAYS=['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 var DAYLABEL=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -287,7 +304,45 @@ var OPEN={
 };
 
 var CAT_ORDER=['Dish 1','Dish 2','Breakfast Sides','Steamed Rice','Plain Rice','Rice','Flavoured Rice','Non-Veg','Non Veg','Dal','Rasam/Sambar','Veg Wet','Veg Dry','Additional Accompaniment','Phulka/Chapathi','Curd/Raitha','Dairy 1','Dairy 2','Salad','Pickle/Fresh Chutney','Fryums/Papad','Dessert','Beverage','Milk'];
-var HERO_CATS=['Non-Veg','Non Veg','Flavoured Rice','Dish 1'];
+
+// What actually pulls people to a mess, ranked by hand rather than by which
+// category a dish happens to sit in. The headline dish is the highest-scoring
+// item on the counter — so matar paneer outranks plain corn rice, which the
+// old category-priority rule got backwards. First pattern to match wins, so
+// specific dishes are listed before the generic ones.
+var APPEAL=[
+  [/chicken\s*(dum\s*)?biry|mutton\s*(dum\s*)?biry|hyd.*biry/i,100],
+  [/chicken\s*65|chilli\s*chicken|butter\s*chicken|chicken\s*(fry|roast|tikka|kabab|lollipop)/i,96],
+  [/mutton|prawn|fish\s*(fry|curry|fingers)/i,94],
+  [/chicken/i,90],
+  [/(butter|shahi|kadai|chilli|tikka)\s*paneer|paneer\s*(butter|tikka|65|majestic)/i,89],
+  [/manchurian|chilli\s*(gobi|mushroom|babycorn)/i,87],
+  [/paneer/i,86],
+  [/(hakka|schezwan|veg)?\s*noodle|chowmein|fried\s*rice/i,84],
+  [/momo|spring\s*roll|dragon/i,82],
+  [/egg\s*(biry|curry|masala|bhurji)|omelet|boiled\s*egg/i,81],
+  [/paneer\s*biry|veg\s*(dum\s*)?biry|biry/i,80],
+  [/pizza|burger|pasta|sandwich|frankie|roll/i,78],
+  [/chole\s*bhat|bhatur|poori|puri/i,76],
+  [/dosa|uttapam|utappam|pesarattu/i,74],
+  [/gulab\s*jamun|ice\s*cream|brownie|cake|jalebi|rasmalai|rasgulla/i,72],
+  [/halwa|kesari|payasam|kheer|laddu|barfi|sheera|double\s*ka\s*meetha/i,70],
+  [/samosa|pakoda|pakora|bajji|bonda|vada|maggi|maggie|cutlet|puff/i,68],
+  [/mushroom|baby\s*corn|babycorn/i,64],
+  [/chole|rajma|chana\s*masala|kadala/i,62],
+  [/aloo|potato|bhindi|gobi|cauliflower|brinjal|capsicum/i,58],
+  [/pulao|puloa|pulihora|jeera\s*rice|lemon\s*rice|tamarind\s*rice|tomato\s*rice|veg\s*rice|coconut\s*rice/i,55],
+  [/khichdi|upma|poha|idli|pongal|vermicelli|sevai/i,50],
+  [/paratha|roti|phulka|chapathi|chapati|naan|kulcha/i,45],
+  [/dal|pappu|sambar|rasam|kadhi|dalcha/i,40],
+  [/rice/i,34],
+  [/curd|butter\s*milk|buttermilk|milk|lassi/i,30],
+  [/salad|pickle|chutney|papad|fryum|podi|jaggery|haldi|tea|coffee|water/i,18]
+];
+function appealOf(n){
+  for(var i=0;i<APPEAL.length;i++) if(APPEAL[i][0].test(n)) return APPEAL[i][1];
+  return 42; // an unrecognised cooked dish outranks staples but not a headliner
+}
 
 function pad(n){return n<10?'0'+n:''+n;}
 function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
@@ -398,19 +453,20 @@ function nutTotal(list){
 }
 function nutHTML(list){
   var t=nutTotal(list);
-  return '<div class="nut"><b>~'+Math.round(t[0]/10)*10+' kcal</b>'+
-    '<span class="macro">'+Math.round(t[1])+'g protein</span>'+
-    '<span class="macro">'+Math.round(t[2])+'g carb</span>'+
-    '<span class="macro">'+Math.round(t[3])+'g fat</span>'+
-    '<span class="est">est. plate</span></div>';
+  return '<div class="nut" title="Estimated for one typical plate">'+
+    '<b>~'+Math.round(t[0]/10)*10+'</b> kcal <i>·</i> '+
+    Math.round(t[1])+'p <i>·</i> '+Math.round(t[2])+'c <i>·</i> '+Math.round(t[3])+'f</div>';
 }
 
 function sig(list){return list?list.map(function(i){return i.c+'|'+i.n.trim().toLowerCase();}).join('~'):'';}
+// The dish most likely to decide where someone eats today.
 function heroOf(list){
-  for(var h=0;h<HERO_CATS.length;h++)
-    for(var i=0;i<list.length;i++)
-      if(list[i].c===HERO_CATS[h])return list[i];
-  return list[0];
+  var best=list[0],bs=-1;
+  list.forEach(function(it){
+    var s=appealOf(it.n);
+    if(s>bs){bs=s;best=it;}
+  });
+  return best;
 }
 function nowMeal(){
   var n=new Date(),hm=n.getHours()*60+n.getMinutes();
@@ -511,30 +567,30 @@ function render(){
   });
 
   var cur=picks[key+'|'+meal];
-  var html='<div class="cols" style="grid-template-columns:repeat('+folded.length+',minmax(0,1fr))">';
+  // 3 fixed tracks (header, nutrition, hero) plus one per category. Every
+  // column emits exactly this many children so the subgrid lines up.
+  var html='<div class="cols" style="grid-template-columns:repeat('+folded.length+
+    ',minmax(0,1fr));grid-template-rows:repeat('+(cats.length+3)+',auto)">';
   folded.forEach(function(f){
     var hero=heroOf(f.list),heroCat=hero?hero.c:'';
     var on=(cur===f.mess.id)||(f.also.some(function(m){return m.id===cur;}));
     html+='<button class="col" type="button" aria-pressed="'+on+'" data-mess="'+f.mess.id+'" style="--mc:var(--m-'+f.mess.id+')">';
-    html+='<div class="chead"><div class="cnamewrap"><div class="cname"><span class="dot"></span>'+esc(f.mess.name)+'</div>';
-    if(f.also.length)html+='<div class="calso">same menu at '+f.also.map(function(m){return esc(m.short);}).join(', ')+'</div>';
+    // Messes serving an identical menu share one column and one title.
+    var title=[f.mess.name].concat(f.also.map(function(m){return m.name;})).join(' / ');
+    html+='<div class="chead"><div class="cnamewrap"><div class="cname"><span class="dot"></span>'+esc(title)+'</div>';
     html+='</div><div class="tick">✓</div></div>';
     html+=nutHTML(f.list);
-    if(hero){
-      html+='<div class="herolab">'+esc(heroCat)+'</div><p class="hero">'+itemHTML(hero.n)+'</p>';
-    }
-    html+='<div class="rows">';
+    html+='<div class="heroblk">'+(hero?
+      '<div class="herolab">'+esc(heroCat)+'</div><p class="hero">'+itemHTML(hero.n)+
+      '<span class="star" title="Pick of the day">★</span></p>':'')+'</div>';
     cats.forEach(function(c){
       var mine=f.list.filter(function(it){return it.c===c;});
-      if(hero&&c===heroCat){
-        mine=mine.filter(function(it){return it.n!==hero.n;});
-        if(!mine.length)return;
-      }
-      html+='<div class="row"><div class="rlab">'+esc(c)+'</div><div class="rval">'+
+      if(hero&&c===heroCat) mine=mine.filter(function(it){return it.n!==hero.n;});
+      html+='<div class="row'+(mine.length?'':' void')+'"><div class="rlab">'+esc(c)+'</div><div class="rval">'+
         (mine.length?mine.map(function(it){return itemHTML(it.n);}).join(''):'<span class="empty">—</span>')+
         '</div></div>';
     });
-    html+='</div></button>';
+    html+='</button>';
   });
   html+='</div>';
 
