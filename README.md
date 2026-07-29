@@ -23,17 +23,8 @@ are kept per day in local storage.
 
 ## Nutrition is estimated
 
-The mess API publishes no nutrition data. Every menu item carries just a name
-and a category, and there is no nutrition endpoint. So the figures are modelled:
-each dish takes a per-serving baseline for its food category, adjusted by
-ingredient keywords in its name (chicken, paneer, fried, ghee, jaggery, millet).
-
-Items whose category badly misleads carry their own values instead. A boiled egg
-sits in the Non-Veg category, so inheriting that baseline made it a 250 kcal,
-29 g protein serving; it is now 78 kcal and 6 g.
-
-The total describes **one plate**, not the whole counter: one starch, one
-lentil, one vegetable, one dairy and two rotis. Real portion size varies more
-than the model does. Compare messes against each other on a given day; don't
-count calories with it.
+The mess API publishes no nutrition data, so the figures are modelled: each dish
+is scored by its food category and the ingredients in its name. The total is one
+typical plate, not the whole counter. Compare messes against each other on a
+given day; don't count calories with it.
 
