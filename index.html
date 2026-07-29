@@ -354,8 +354,10 @@ var APPEAL=[
 ];
 // A side is a side however it is named: "Pasta Salad" and "Dosakaya Chutney"
 // must never take the headline off a real dish.
+// "Accompainment" is misspelt in the source data; both spellings occur.
 var SIDE_CATS={'Salad':1,'Pickle/Fresh Chutney':1,'Fryums/Papad':1,
-  'Additional Accompaniment':1,'Curd/Raitha':1,'Beverage':1};
+  'Additional Accompaniment':1,'Accompaniment':1,'Accompainment':1,
+  'Curd/Raitha':1,'Beverage':1};
 function appealOf(it){
   var n=typeof it==='string'?it:it.n, c=typeof it==='string'?'':it.c;
   var s=42; // an unrecognised cooked dish outranks staples but not a headliner
@@ -503,8 +505,16 @@ function nutHTML(list){
 }
 
 function sig(list){return list?list.map(function(i){return i.c+'|'+i.n.trim().toLowerCase();}).join('~'):'';}
+// At snacks the snack item is the meal; milk, tea and a side of chopped onion
+// are never the reason you turn up. Rank within that category alone.
+var MEAL_HERO_CAT={snacks:'Snack Item'};
 // The dish most likely to decide where someone eats today.
-function heroOf(list){
+function heroOf(list,meal){
+  var pref=MEAL_HERO_CAT[meal];
+  if(pref){
+    var only=list.filter(function(it){return it.c===pref;});
+    if(only.length) list=only;
+  }
   var best=list[0],bs=-1;
   list.forEach(function(it){
     var s=appealOf(it);
@@ -616,7 +626,7 @@ function render(){
   var html='<div class="cols" style="grid-template-columns:repeat('+folded.length+
     ',minmax(0,1fr));grid-template-rows:repeat('+(cats.length+3)+',auto)">';
   folded.forEach(function(f){
-    var hero=heroOf(f.list),heroCat=hero?hero.c:'';
+    var hero=heroOf(f.list,meal),heroCat=hero?hero.c:'';
     var on=(cur===f.mess.id)||(f.also.some(function(m){return m.id===cur;}));
     html+='<button class="col" type="button" aria-pressed="'+on+'" data-mess="'+f.mess.id+'" style="--mc:var(--m-'+f.mess.id+')">';
     // Messes serving an identical menu share one column and one title.
