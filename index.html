@@ -138,6 +138,10 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .calso{font-family:var(--f-mono);font-size:9px;letter-spacing:.05em;color:var(--ink3);margin-top:5px;text-transform:uppercase;line-height:1.5}
 .tick{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;background:var(--mc);color:var(--paper);opacity:0;transition:opacity .14s;flex:none;font-family:var(--f-mono)}
 .col[aria-pressed="true"] .tick{opacity:1}
+.nut{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin:-4px 0 13px;font-family:var(--f-mono);font-size:10px;letter-spacing:.04em;color:var(--ink3)}
+.nut b{font-size:13px;font-weight:700;color:var(--ink2);letter-spacing:-.01em}
+.nut .macro{white-space:nowrap}
+.nut .est{opacity:.7}
 .herolab{font-family:var(--f-mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3);margin-bottom:4px}
 .hero{font-family:var(--f-body);font-size:clamp(18px,2vw,24px);line-height:1.15;letter-spacing:-.014em;font-weight:400;text-wrap:balance}
 .rows{margin-top:14px}
@@ -240,6 +244,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 <footer class="foot">
   <div>Menus come from the IIIT-H mess API.</div>
+  <div><b>Nutrition figures are estimates, not measurements.</b> The mess API publishes no nutrition data, so each dish is scored from a per-serving baseline for its food category, then adjusted for ingredients in its name. The total describes one typical plate — the first dish in each category, two rotis, and flavoured rice standing in for plain — not the whole counter. Real portion size varies more than the model does, so use these to compare one mess against another on a given day, not to count calories.</div>
   <div>Palāsh serves the same menu as Bakul Veg — where they match, the two are folded into one column. Bakul Veg shuts its lunch line on the days Bakul NonVeg runs lunch, which is when Palāsh covers it.</div>
 </footer>
 
@@ -310,6 +315,96 @@ function isOpen(messId,meal,dow){
   var o=OPEN[messId];if(!o||!o[meal])return false;
   return o[meal].indexOf(dow)!==-1;
 }
+// ── Nutrition estimates ──────────────────────────────────────────────
+// The mess API carries no nutrition data, so these are modelled, not measured.
+// A baseline per food category for one typical mess serving, adjusted by
+// ingredient keywords in the dish name. Values are [kcal, protein, carb, fat].
+// Treat them as ballpark: portion size varies more than any of this.
+var NUT_BASE={
+'Plain Rice':[200,4,44,.5],'Steamed Rice':[200,4,44,.5],'Rice':[200,4,44,.5],
+'Flavoured Rice':[330,7,52,10],'Khichdi':[220,7,36,5],
+'Non-Veg':[230,21,4,14],'Non Veg':[230,21,4,14],'Protein':[180,16,6,10],
+'Dal':[150,9,20,4],'Rasam/Sambar':[90,4,13,2.5],'Rasam/Sambar/Khichdi':[110,5,16,3],
+'Veg Wet':[140,4,14,7],'Veg Dry':[120,3,13,6],
+'Veg Wet Curry':[140,4,14,7],'Veg Dry Curry':[120,3,13,6],
+'Phulka/Chapathi':[90,3,17,1.5],
+'Curd/Raitha':[70,4,5,4],'Dairy 1':[110,6,9,5],'Dairy 2':[110,6,9,5],'Milk':[120,6,10,6],
+'Salad':[30,1,6,.3],'Pickle/Fresh Chutney':[35,1,3,2.5],'Fryums/Papad':[50,1,7,2.5],
+'Dessert':[200,3,34,6],'Dessert/Spl':[200,3,34,6],'Beverage':[45,1,9,.5],
+'Dish 1':[200,6,30,6],'Dish 2':[200,6,30,6],'Breakfast Sides':[80,2,12,3],
+'Snack Item':[190,4,26,8],'Additional Accompaniment':[40,1,6,1.5]
+};
+var NUT_DEFAULT=[120,3,18,4];
+var NUT_KW=[
+  {re:/chicken|mutton|fish|prawn|keema|egg|omelet|boiled egg/i, d:[60,12,0,4]},
+  {re:/paneer|cheese/i,                                          d:[70,8,2,6]},
+  {re:/fried|fry|pakoda|bajji|vada|samosa|poori|puri|bonda|cutlet|roast/i, d:[80,0,4,7]},
+  {re:/ghee|butter|cream|malai|coconut milk/i,                   d:[50,0,1,6]},
+  {re:/jaggery|sugar|halwa|kesari|payasam|kheer|gulab|jamun|laddu|sweet/i, d:[60,0,15,2]},
+  {re:/rajma|chana|chole|lobia|sprout|moong|soya|dal|peas/i,      d:[20,4,5,.5]},
+  {re:/millet|ragi|jowar|bajra|barnyard|foxtail|oats/i,           d:[-15,1,-2,0]},
+  {re:/fruit|papaya|melon|banana|apple/i,                         d:[-40,-1,-4,-2]}
+];
+function nutOf(it){
+  var b=NUT_BASE[it.c]||NUT_DEFAULT, v=[b[0],b[1],b[2],b[3]];
+  for(var i=0;i<NUT_KW.length;i++){
+    if(NUT_KW[i].re.test(it.n)){
+      var d=NUT_KW[i].d;
+      v[0]+=d[0];v[1]+=d[1];v[2]+=d[2];v[3]+=d[3];
+    }
+  }
+  for(var j=0;j<4;j++) if(v[j]<0) v[j]=0;
+  return v;
+}
+// Servings of each category on one typical plate. A menu lists everything the
+// counter has; a person takes one of most things and two rotis. Categories
+// absent here are not counted toward the plate.
+var PLATE={
+'Plain Rice':1,'Steamed Rice':1,'Rice':1,'Flavoured Rice':1,'Khichdi':1,
+'Non-Veg':1,'Non Veg':1,'Protein':1,
+'Dal':1,'Rasam/Sambar':1,'Rasam/Sambar/Khichdi':1,
+'Veg Wet':1,'Veg Dry':1,'Veg Wet Curry':1,'Veg Dry Curry':1,
+'Phulka/Chapathi':2,
+'Curd/Raitha':1,'Dairy 1':1,'Milk':1,
+'Salad':1,'Pickle/Fresh Chutney':1,'Fryums/Papad':1,
+'Dessert':1,'Dessert/Spl':1,'Beverage':1,
+'Dish 1':1,'Dish 2':1,'Breakfast Sides':1,'Snack Item':1
+};
+// Categories you pick between rather than stack. Only the first one present
+// counts: a plate carries one starch base and one dairy, not all of them.
+var EXCLUSIVE=[
+  ['Flavoured Rice','Khichdi','Plain Rice','Steamed Rice','Rice'],
+  ['Curd/Raitha','Dairy 1','Dairy 2','Milk']
+];
+// One plate: the first dish offered in each category, times its serving count.
+function nutTotal(list){
+  var first={};
+  list.forEach(function(it){ if(!(it.c in first)) first[it.c]=it; });
+  var drop={};
+  EXCLUSIVE.forEach(function(g){
+    var kept=false;
+    g.forEach(function(c){
+      if(!first[c]) return;
+      if(kept) drop[c]=1; else kept=true;
+    });
+  });
+  var t=[0,0,0,0];
+  Object.keys(first).forEach(function(c){
+    var n=PLATE[c]; if(!n||drop[c]) return;
+    var v=nutOf(first[c]);
+    t[0]+=v[0]*n; t[1]+=v[1]*n; t[2]+=v[2]*n; t[3]+=v[3]*n;
+  });
+  return t;
+}
+function nutHTML(list){
+  var t=nutTotal(list);
+  return '<div class="nut"><b>~'+Math.round(t[0]/10)*10+' kcal</b>'+
+    '<span class="macro">'+Math.round(t[1])+'g protein</span>'+
+    '<span class="macro">'+Math.round(t[2])+'g carb</span>'+
+    '<span class="macro">'+Math.round(t[3])+'g fat</span>'+
+    '<span class="est">est. plate</span></div>';
+}
+
 function sig(list){return list?list.map(function(i){return i.c+'|'+i.n.trim().toLowerCase();}).join('~'):'';}
 function heroOf(list){
   for(var h=0;h<HERO_CATS.length;h++)
@@ -424,6 +519,7 @@ function render(){
     html+='<div class="chead"><div class="cnamewrap"><div class="cname"><span class="dot"></span>'+esc(f.mess.name)+'</div>';
     if(f.also.length)html+='<div class="calso">same menu at '+f.also.map(function(m){return esc(m.short);}).join(', ')+'</div>';
     html+='</div><div class="tick">✓</div></div>';
+    html+=nutHTML(f.list);
     if(hero){
       html+='<div class="herolab">'+esc(heroCat)+'</div><p class="hero">'+itemHTML(hero.n)+'</p>';
     }
