@@ -274,7 +274,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 
 <footer class="foot">
   <div>Menus come from the IIIT-H mess API.</div>
-  <div><b>Nutrition figures are estimates, not measurements.</b> The mess API publishes no nutrition data, so each dish is scored from a per-serving baseline for its food category, then adjusted for ingredients in its name. The total describes one typical plate: the first dish in each category, two rotis, and flavoured rice standing in for plain, rather than the whole counter. Real portion size varies more than the model does, so use these to compare one mess against another on a given day, not to count calories.</div>
+  <div><b>Nutrition figures are estimates, not measurements.</b> The mess API publishes no nutrition data, so each dish is scored from a per-serving baseline for its food category, then adjusted for ingredients in its name. Common items where the category misleads, such as a boiled egg sitting under Non-Veg, carry their own values instead. The total describes one typical plate: one starch, one lentil, one vegetable, one dairy and two rotis, rather than one of everything on the counter. Real portion size varies more than the model does, so use these to compare one mess against another on a given day, not to count calories.</div>
   <div>Palāsh serves the same menu as Bakul Veg, so where they match the two are folded into one column. Bakul Veg shuts its lunch line on the days Bakul NonVeg runs lunch, which is when Palāsh covers it.</div>
 </footer>
 
@@ -396,31 +396,52 @@ function isOpen(messId,meal,dow){
 // ingredient keywords in the dish name. Values are [kcal, protein, carb, fat].
 // Treat them as ballpark: portion size varies more than any of this.
 var NUT_BASE={
-'Plain Rice':[200,4,44,.5],'Steamed Rice':[200,4,44,.5],'Rice':[200,4,44,.5],
-'Flavoured Rice':[330,7,52,10],'Khichdi':[220,7,36,5],
-'Non-Veg':[230,21,4,14],'Non Veg':[230,21,4,14],'Protein':[180,16,6,10],
-'Dal':[150,9,20,4],'Rasam/Sambar':[90,4,13,2.5],'Rasam/Sambar/Khichdi':[110,5,16,3],
-'Veg Wet':[140,4,14,7],'Veg Dry':[120,3,13,6],
-'Veg Wet Curry':[140,4,14,7],'Veg Dry Curry':[120,3,13,6],
-'Phulka/Chapathi':[90,3,17,1.5],
-'Curd/Raitha':[70,4,5,4],'Dairy 1':[110,6,9,5],'Dairy 2':[110,6,9,5],'Milk':[120,6,10,6],
-'Salad':[30,1,6,.3],'Pickle/Fresh Chutney':[35,1,3,2.5],'Fryums/Papad':[50,1,7,2.5],
-'Dessert':[200,3,34,6],'Dessert/Spl':[200,3,34,6],'Beverage':[45,1,9,.5],
-'Dish 1':[200,6,30,6],'Dish 2':[200,6,30,6],'Breakfast Sides':[80,2,12,3],
-'Snack Item':[190,4,26,8],'Additional Accompaniment':[40,1,6,1.5]
+'Plain Rice':[180,3.5,40,.5],'Steamed Rice':[180,3.5,40,.5],'Rice':[180,3.5,40,.5],
+'Flavoured Rice':[260,6,44,7],'Khichdi':[190,6,32,4],
+'Non-Veg':[190,16,4,11],'Non Veg':[190,16,4,11],'Protein':[150,11,7,8],
+'Dal':[115,5.5,17,3],'Rasam/Sambar':[80,4,12,2],'Rasam/Sambar/Khichdi':[100,5,15,2.5],
+'Veg Wet':[110,3,12,5.5],'Veg Dry':[100,3,11,5],
+'Veg Wet Curry':[110,3,12,5.5],'Veg Dry Curry':[100,3,11,5],
+'Phulka/Chapathi':[75,2.5,14,1],
+'Curd/Raitha':[60,3.5,4,3.5],'Dairy 1':[90,5,8,4],'Dairy 2':[90,5,8,4],'Milk':[100,5,9,5],
+'Salad':[25,1,5,.3],'Pickle/Fresh Chutney':[25,.5,2,2],'Fryums/Papad':[35,.8,5,1.8],
+'Dessert':[140,2.5,24,4],'Dessert/Spl':[140,2.5,24,4],'Beverage':[40,1,8,.5],
+'Dish 1':[170,5,26,5],'Dish 2':[170,5,26,5],'Breakfast Sides':[65,1.5,10,2.5],
+'Snack Item':[160,3.5,22,6],'Additional Accompaniment':[30,.8,4,1]
 };
 var NUT_DEFAULT=[120,3,18,4];
+// A category baseline cannot tell a boiled egg from a chicken curry: both sit
+// in Non-Veg. These are the common items where the category badly misleads,
+// so they carry their own values and skip the keyword adjustments entirely.
+var ITEM_OVERRIDES=[
+  [/^\s*boiled\s*egg/i,            [78,6,.6,5]],
+  [/omelet|egg\s*bhurji/i,         [120,8,1,9]],
+  [/boiled\s*peanut|groundnut/i,   [90,4,6,7]],
+  [/^\s*milk\b|milk\s*\(whole\)/i, [110,5,9,5.5]],
+  [/^\s*(tea|coffee)\b|tea\s*bag/i,[40,1,6,1]],
+  [/butter\s*milk|buttermilk/i,    [40,2,3,1.5]],
+  [/^\s*curd\s*$/i,                [60,3.5,4,3.5]],
+  [/fryum|papad/i,                 [40,.7,5,2]],
+  [/cut\s*fruit|fresh\s*fruit/i,   [60,.8,15,.3]],
+  [/cornflake|corn\s*flake/i,      [110,2,24,.5]],
+  [/ketchup|sauce/i,               [15,0,4,0]],
+  [/puffed\s*rice|murmura/i,       [60,1.2,13,.2]],
+  [/bread.*(butter|jam)/i,         [180,4,28,6]],
+  [/podi|karam|haldi|jaggery\s*powder|black\s*salt/i,[30,1,3,1.5]]
+];
 var NUT_KW=[
-  {re:/chicken|mutton|fish|prawn|keema|egg|omelet|boiled egg/i, d:[60,12,0,4]},
-  {re:/paneer|cheese/i,                                          d:[70,8,2,6]},
-  {re:/fried|fry|pakoda|bajji|vada|samosa|poori|puri|bonda|cutlet|roast/i, d:[80,0,4,7]},
-  {re:/ghee|butter|cream|malai|coconut milk/i,                   d:[50,0,1,6]},
-  {re:/jaggery|sugar|halwa|kesari|payasam|kheer|gulab|jamun|laddu|sweet/i, d:[60,0,15,2]},
-  {re:/rajma|chana|chole|lobia|sprout|moong|soya|dal|peas/i,      d:[20,4,5,.5]},
-  {re:/millet|ragi|jowar|bajra|barnyard|foxtail|oats/i,           d:[-15,1,-2,0]},
-  {re:/fruit|papaya|melon|banana|apple/i,                         d:[-40,-1,-4,-2]}
+  {re:/chicken|mutton|fish|prawn|keema/i,                        d:[40,6,0,3]},
+  {re:/paneer|cheese/i,                                          d:[55,7,2,5]},
+  {re:/fried|fry|pakoda|bajji|vada|samosa|poori|puri|bonda|cutlet|roast/i, d:[60,0,3,5]},
+  {re:/ghee|butter|cream|malai|coconut milk/i,                   d:[40,0,1,4.5]},
+  {re:/jaggery|sugar|halwa|kesari|payasam|kheer|gulab|jamun|laddu|sweet/i, d:[45,0,11,1.5]},
+  {re:/rajma|chana|chole|lobia|sprout|moong|soya|dal|peas/i,      d:[15,2,4,.5]},
+  {re:/millet|ragi|jowar|bajra|barnyard|foxtail|oats/i,           d:[-12,1,-2,0]},
+  {re:/fruit|papaya|melon|banana|apple/i,                         d:[-30,-1,-3,-1.5]}
 ];
 function nutOf(it){
+  for(var k=0;k<ITEM_OVERRIDES.length;k++)
+    if(ITEM_OVERRIDES[k][0].test(it.n)) return ITEM_OVERRIDES[k][1].slice();
   var b=NUT_BASE[it.c]||NUT_DEFAULT, v=[b[0],b[1],b[2],b[3]];
   for(var i=0;i<NUT_KW.length;i++){
     if(NUT_KW[i].re.test(it.n)){
@@ -449,7 +470,10 @@ var PLATE={
 // counts: a plate carries one starch base and one dairy, not all of them.
 var EXCLUSIVE=[
   ['Flavoured Rice','Khichdi','Plain Rice','Steamed Rice','Rice'],
-  ['Curd/Raitha','Dairy 1','Dairy 2','Milk']
+  ['Dal','Rasam/Sambar','Rasam/Sambar/Khichdi'],
+  ['Veg Wet','Veg Dry','Veg Wet Curry','Veg Dry Curry'],
+  ['Curd/Raitha','Dairy 1','Dairy 2','Milk'],
+  ['Dish 1','Dish 2']
 ];
 // One plate: the first dish offered in each category, times its serving count.
 function nutTotal(list){
