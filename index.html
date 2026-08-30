@@ -714,7 +714,13 @@ document.getElementById('clearBtn').addEventListener('click',function(){
 function stepMeal(n){
   var ids=MEALS.map(function(m){return m.id;}),i=ids.indexOf(state.meal);
   if(i<0)i=0;
-  state.meal=ids[(i+n+ids.length)%ids.length];render();
+  i+=n;
+  if(i>=0&&i<ids.length){state.meal=ids[i];render();return;}
+  // Past an end (right on dinner / left on breakfast) rolls into the
+  // adjacent day, landing on its first / last meal. Respects the date bounds.
+  var d=new Date(state.date);d.setDate(d.getDate()+(i<0?-1:1));
+  if(iso(d)<iso(MINDATE)||iso(d)>iso(MAXDATE))return;
+  state.date=d;state.meal=i<0?ids[ids.length-1]:ids[0];render();
 }
 document.addEventListener('keydown',function(e){
   if(e.target.matches('input,textarea'))return;
